@@ -13,7 +13,7 @@ I use xampp because it's convenient but you just need some way to run an apache 
 - Clone the repo into the directory where your public html files go. (For xampp: xampp/htdocs)
 - Open up the site in your browser (probably http://localhost)
 - Go through the steps to setup UserSpice (if using xampp: Database Host is localhost)
-- Once UserSpice is setup, delete the install directory. You can also delte the if statement at the start of index.php
+- Once UserSpice is setup, either delete the install directory or delete the if statement at the start of index.php that checks if install/index.php exists
 - The default login info for UserSpice should be username: admin, password: password
 - To setup the database run the queries shown below. They will create the tables that the site uses to keep
 track of the games and challenges. If you named your database something other than crumble, you will need
