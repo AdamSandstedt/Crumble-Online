@@ -248,7 +248,7 @@ for($i = 0; $i < count($moves); $i++) {
         }
         ';
     }
-    
+
     echo '
     (function updateTime() {
     var player = "'.$player.'";
@@ -265,29 +265,29 @@ for($i = 0; $i < count($moves); $i++) {
     var minutes = Math.floor((distance % (60 * 60)) / 60);
     var seconds = Math.floor(distance % 60);
     // console.log(now, distance, cg.time);
-    
+
     document.getElementById(cg.turn == "b" ? "time-black" : "time-white").innerHTML = (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     if (distance <= 0) {
     document.getElementById(cg.turn == "b" ? "time-black" : "time-white").innerHTML = "out of time";
-    // if(distance <= -10) {
-    //     cg.winner = cg.turn == "b" ? "w" : "b";
-    //     var xmlhttp = new XMLHttpRequest();
-    //     xmlhttp.onreadystatechange = function() {
-    //         if (this.readyState == 4 && this.status == 200) {
-    //             setTimeout(function() {
-    //                 window.location.reload();
-    //             }, 1000);
-    //         } else if(this.readyState == 4) {
-    //             window.location.reload();
-    //         }
-    //     };
-    //     xmlhttp.open("POST", "/assets/php/submit-move.php", true);
-    //     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    //     xmlhttp.send("game='.$results->id.'&move=done&win=" + (cg.turn == "b" ? "w" : "b") + "&time="+Math.floor(new Date().getTime() / 1000));
-    // }
+    if(distance <= -10) {
+        cg.winner = cg.turn == "b" ? "w" : "b";
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                setTimeout(function() {
+                    window.location.reload();
+                }, 1000);
+            } else if(this.readyState == 4) {
+                window.location.reload();
+            }
+        };
+        xmlhttp.open("POST", "/assets/php/submit-move.php", true);
+        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlhttp.send("game='.$results->id.'&move=done&win=" + (cg.turn == "b" ? "w" : "b") + "&time="+Math.floor(new Date().getTime() / 1000));
+    }
     }
     var distance1 = distance;
-    
+
     distance = cg.turn == "b" ? cg.timew : cg.timeb;
     var hours = Math.floor(distance / (60 * 60));
     var minutes = Math.floor((distance % (60 * 60)) / 60);
@@ -295,22 +295,24 @@ for($i = 0; $i < count($moves); $i++) {
     document.getElementById(cg.turn == "b" ? "time-white" : "time-black").innerHTML = (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     if (distance <= 0) {
     document.getElementById(cg.turn == "b" ? "time-white" : "time-black").innerHTML = "out of time";
-    // if(distance <= -10) {
-    //     cg.winner = cg.turn == "b" ? "w" : "b";
-    //     var xmlhttp = new XMLHttpRequest();
-    //     xmlhttp.onreadystatechange = function() {
-    //         if (this.readyState == 4 && this.status == 200) {
-    //             setTimeout(function() {
-    //                 window.location.reload();
-    //             }, 1000);
-    //         } else if(this.readyState == 4) {
-    //             window.location.reload();
-    //         }
-    //     };
-    //     xmlhttp.open("POST", "/assets/php/submit-move.php", true);
-    //     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    //     xmlhttp.send("game='.$results->id.'&move=done&win=" + (cg.turn == "b" ? "w" : "b") + "&time="+Math.floor(new Date().getTime() / 1000));
-    // }
+    if(distance <= -10) {
+        cg.winner = cg.turn == "b" ? "w" : "b";
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                setTimeout(function() {
+                    window.location.reload();
+                }, 1000);
+            } else if(this.readyState == 4) {
+                setTimeout(function() {
+                    window.location.reload();
+                }, 1000);
+            }
+        };
+        xmlhttp.open("POST", "/assets/php/submit-move.php", true);
+        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlhttp.send("game='.$results->id.'&move=done&win=" + (cg.turn == "b" ? "w" : "b") + "&time="+Math.floor(new Date().getTime() / 1000));
+    }
     }
     if(distance1 <= 0 || distance <= 0) {
         cg.action = "done";
@@ -319,8 +321,8 @@ for($i = 0; $i < count($moves); $i++) {
             cg.action = "";
     }
 
-    if(cg.winner != "b" && cg.winner != "w" && cg.winner != "d")
-        setTimeout(updateTime, 200);
+    // if(cg.winner != "b" && cg.winner != "w" && cg.winner != "d")
+    setTimeout(updateTime, 200);
     })();
     ';
     }
@@ -328,4 +330,4 @@ for($i = 0; $i < count($moves); $i++) {
   ?>
 
 </body>
-</html> 
+</html>

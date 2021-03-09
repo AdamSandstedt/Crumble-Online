@@ -6,8 +6,7 @@ $re = "/^\d+(,\d+)*[VHJ]([NESW]*|[NESW]-[NESW]+|\d+|\d+-\d+[NESW]-[NESW]+|\d+(,\
 $move = Input::get("move");
 // file_put_contents ("temp.txt", "$move\n", FILE_APPEND);
 
-// if(!$move || $move != "done" && !preg_match($re, $move)) {die();}
-if(!$move || !preg_match($re, $move)) {die();}
+if(!$move || $move != "done" && !preg_match($re, $move)) {die();}
 $game = Input::get("game");
 // file_put_contents ("temp.txt", "$move, $game\n", FILE_APPEND);
 
@@ -25,10 +24,8 @@ if($results->moves == '')
     $moves = [];
 else
     $moves = explode("\r\n", $results->moves);
-// if($results->user_id_black == $user->data()->id && count($moves) % 2 == 1 && $move != "done") {die();}
-// if($results->user_id_white == $user->data()->id && count($moves) % 2 == 0 && $move != "done") {die();}
-if($results->user_id_black == $user->data()->id && count($moves) % 2 == 1) {die();}
-if($results->user_id_white == $user->data()->id && count($moves) % 2 == 0) {die();}
+if($results->user_id_black == $user->data()->id && count($moves) % 2 == 1 && $move != "done") {die();}
+if($results->user_id_white == $user->data()->id && count($moves) % 2 == 0 && $move != "done") {die();}
 $time = Input::get("time");
 // file_put_contents ("temp.txt", "$move, $game, $time\n", FILE_APPEND);
 
@@ -38,11 +35,11 @@ if(isset($time)) {
     $time = time();
 }
 if($results->moves == '') {
-    // if($move == "done") {
-    //     die();
-    // } else {
+    if($move == "done") {
+        die();
+    } else {
     $db->query('UPDATE games_current SET moves = ?, time = ? WHERE games_current.id = ?', [$move, $time, $game]);
-    // }
+    }
     if($db->error()) {
         file_put_contents ("error_log", "submit-move line 39: ".$db->errorString(), FILE_APPEND);
         die();
@@ -64,14 +61,14 @@ if($results->moves == '') {
             if($timew < 0)
                 $timew = 0;
         }
-        // if($move == "done") {
-        //     if($timeb == 0 || $timew == 0)
-        //         $db->query('UPDATE games_current SET time = ?, time_black = ?, time_white = ? WHERE games_current.id = ?', [$time, $timeb, $timew, $game]);
-        //     else
-        //         die();
-        // } else {
+        if($move == "done") {
+            if($timeb == 0 || $timew == 0)
+                $db->query('UPDATE games_current SET time = ?, time_black = ?, time_white = ? WHERE games_current.id = ?', [$time, $timeb, $timew, $game]);
+            else
+                die();
+        } else {
         $db->query('UPDATE games_current SET moves = CONCAT(moves, ?), time = ?, time_black = ?, time_white = ? WHERE games_current.id = ?', ["\r\n".$move, $time, $timeb, $timew, $game]);
-        // }
+        }
         if($db->error()) {
             file_put_contents ("error_log", "submit-move line 61: ".$db->errorString(), FILE_APPEND);
             die();
@@ -81,11 +78,11 @@ if($results->moves == '') {
             die();
         }
     } else {
-        // if($move == "done") {
-        //     die();
-        // } else {
+        if($move == "done") {
+            die();
+        } else {
         $db->query('UPDATE games_current SET moves = CONCAT(moves, ?), time = ? WHERE games_current.id = ?', ["\r\n".$move, $time, $game]);
-        // }
+        }
         if($db->error()) {
             file_put_contents ("error_log", "submit-move line 71: ".$db->errorString(), FILE_APPEND);
             die();
@@ -102,10 +99,10 @@ if(isset($timeb) && isset($timew)) {
         $win = "w";
     else if($timew == 0)
         $win = "b";
-    // else if($move == "done")
-    //     $win = "";
+    else if($move == "done")
+        $win = "";
 }
-// file_put_contents ("temp.txt", "$move, $game, $time, $win\n\n", FILE_APPEND);
+
 if($win == "b" || $win == "w" || $win == "d") {
     $query = $db->query('SELECT * FROM games_current WHERE id = ?', [$game]);
     if($db->error()) {
