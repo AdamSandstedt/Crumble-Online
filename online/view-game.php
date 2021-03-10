@@ -94,6 +94,8 @@ table, td {
     <input type="checkbox" name="checkbox-1" id="checkbox-notations">
     <button class="ui-button ui-widget ui-corner-all" id="previous-move"><</button>
     <button class="ui-button ui-widget ui-corner-all" id="next-move">></button>
+    <br>
+    <button class="ui-button ui-widget ui-corner-all" id="copy-to-local">Copy Game to Local</button>
   </div>
   <br><br>
   </div></td><td style="border:none;">
@@ -141,6 +143,14 @@ table, td {
     cg.showNotations = $(this).prop("checked");
     cb.draw(canvas, cg.notationMap, cg.showNotations);
     }
+
+    $( "#copy-to-local" ).click(function() {
+      setCookie("moves", cg.history.join("/"), 24*7);
+      setCookie("boardWidth", cg.board.width, 24*7);
+      setCookie("boardHeight", cg.board.height, 24*7);
+      setCookie("extra", cg.board.extra, 24*7);
+      window.location.href = "/local/two-player.php";
+    });
     });';
     if(isset($results->time_black) && isset($results->time_white)) {
     echo 'var startTimer = true;
