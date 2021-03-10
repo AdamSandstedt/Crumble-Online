@@ -1150,17 +1150,6 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
         cgame.notation = cgame.notation.substr(0,i);
       }
       if(gameId) {
-        table.rows[Math.floor((cgame.historyIndex - 1) / 2)].cells[((cgame.historyIndex - 1) % 2) + 1].style.backgroundColor = "initial";
-        var rows = table.rows;
-        var lastRow = rows[rows.length-1];
-        if(!lastRow || lastRow.cells.length == 3) {
-            lastRow = table.insertRow();
-            lastRow.insertCell();
-            lastRow.cells[0].innerText = rows.length + ".";
-        }
-        lastRow.insertCell();
-        lastRow.cells[lastRow.cells.length-1].innerText = cgame.notation;
-        table.rows[Math.floor(cgame.historyIndex / 2)].cells[(cgame.historyIndex % 2) + 1].style.backgroundColor = "yellow";
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -1265,12 +1254,12 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
         xmlhttp.send("game=" + gameId + "&move=" + cgame.notation + (cgame.winner ? "&win="+cgame.winner : "") + "&time="+cgame.time);
       } else {
         var moves = getCookie("moves");
+        if(cgame.historyIndex < cgame.history.length) {
+          moves = moves.split("/").slice(0,cgame.historyIndex).join("/");
+        }
         if(!moves) {
           moves = cgame.notation;
         } else {
-          if(cgame.historyIndex < cgame.history.length) {
-            moves = moves.split("/").slice(0,cgame.historyIndex).join("/");
-          }
           moves += "/" + cgame.notation;
         }
         setCookie("moves", moves, 24*7);
@@ -1280,8 +1269,26 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
         // console.log(cgame.notation);
       }
       if(cgame.historyIndex < cgame.history.length) {
+        var extraRows = Math.floor((cgame.history.length - 1) / 2) - Math.floor((cgame.historyIndex - 1) / 2);
         cgame.history.splice(cgame.historyIndex);
+        for(var i = 0; i < extraRows; i++) {
+          table.deleteRow(table.rows.length - 1);
+        }
+        if(table.rows.length > 0 && cgame.historyIndex % 2 == 1)
+          table.rows[table.rows.length-1].deleteCell(2);
       }
+      if(cgame.historyIndex > 0)
+        table.rows[Math.floor((cgame.historyIndex - 1) / 2)].cells[((cgame.historyIndex - 1) % 2) + 1].style.backgroundColor = "initial";
+      var rows = table.rows;
+      var lastRow = rows[rows.length-1];
+      if(!lastRow || lastRow.cells.length == 3) {
+          lastRow = table.insertRow();
+          lastRow.insertCell();
+          lastRow.cells[0].innerText = rows.length + ".";
+      }
+      lastRow.insertCell();
+      lastRow.cells[lastRow.cells.length-1].innerText = cgame.notation;
+      table.rows[Math.floor(cgame.historyIndex / 2)].cells[(cgame.historyIndex % 2) + 1].style.backgroundColor = "yellow";
       cgame.history.push(cgame.notation);
       cgame.historyIndex++;
     //   cgame.notation = "";

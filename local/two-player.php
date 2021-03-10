@@ -13,6 +13,13 @@ body {
   font-family: "Lato", sans-serif;
 }
 
+table, td {
+    border: 1px solid black;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: top;
+}
+
 #main {
   transition: margin-left .5s;
   padding-left: 8px;
@@ -37,6 +44,8 @@ body {
 <div id="main">
   <h2 style="margin-bottom: 10px">Two Player Local Game</h2>
 
+  <table style="border:none;"><tr><td style="border:none;">
+
   <div style="position: relative; width: fit-content; height: fit-content">
   <canvas id="crumble-canvas"
     style="border:1px solid black; position: relative;"></canvas>
@@ -51,6 +60,11 @@ body {
     <button class="ui-button ui-widget ui-corner-all" id="next-move">></button>
   </div>
   <br><br>
+  </div></td><td style="border:none;">
+  <div>
+  <table style="float: right;" id="moves-table"> </table>
+  </table>
+  </div></td></tr></table>
 
   <script>
     $( function() {
@@ -74,13 +88,24 @@ body {
 
       var cb = new CBoard(h, w, extra);
       var cg = new CGame(cb);
-      setupGraphics(cg, canvas, icanvas, true, false);
+      var table = document.getElementById("moves-table");
+      setupGraphics(cg, canvas, icanvas, true, undefined, table);
       var m = getCookie("moves");
       if(m) {
         var moves = m.split("/");
         for(var i = 0; i < moves.length; i++) {
           cg.doMove(moves[i], canvas, icanvas);
+          var rows = table.rows;
+          var lastRow = rows[rows.length-1];
+          if(!lastRow || lastRow.cells.length == 3) {
+              lastRow = table.insertRow();
+              lastRow.insertCell();
+              lastRow.cells[0].innerText = rows.length + ".";
+          }
+          lastRow.insertCell();
+          lastRow.cells[lastRow.cells.length-1].innerText = cg.notation;
         }
+        table.rows[Math.floor((cg.historyIndex - 1) / 2)].cells[((cg.historyIndex - 1) % 2) + 1].style.backgroundColor = "yellow";
       }
 
       document.getElementById("checkbox-notations").onclick = function() {

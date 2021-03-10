@@ -96,6 +96,20 @@ table, td {
     <button class="ui-button ui-widget ui-corner-all" id="next-move">></button>
   </div>
   <br><br>
+  </div></td><td style="border:none;">
+  <div>
+  <table style="float: right;" id="moves-table">
+  <?php
+  for($i = 0; $i < count($moves); $i++) {
+      if($i % 2 == 0) {
+          echo "<tr><td>".($i / 2 + 1).".</td><td>".$moves[$i]."</td>";
+      } else {
+          echo '<td>'.$moves[$i]."</td></tr>";
+      }
+  }
+  ?>
+  </table>
+  </div></td></tr></table>
 
   <?php
     echo '<script>
@@ -116,12 +130,14 @@ table, td {
     }
     echo 'var time = undefined;';
     echo 'var cb = new CBoard(h, w, extra);
-    var cg = new CGame(cb, false, time, timeb, timew);';
-    echo 'setupGraphics(cg, canvas, undefined, true);';
+    var cg = new CGame(cb, false, time, timeb, timew);
+    var table = document.getElementById("moves-table");
+    setupGraphics(cg, canvas, undefined, true, '.$results->id.', table);';
     foreach($moves as $move) {
         echo 'cg.doMove("'.$move.'", canvas);';
     }
-    echo 'document.getElementById("checkbox-notations").onclick = function() {
+    echo 'table.rows[Math.floor((cg.historyIndex - 1) / 2)].cells[((cg.historyIndex - 1) % 2) + 1].style.backgroundColor = "yellow";
+    document.getElementById("checkbox-notations").onclick = function() {
     cg.showNotations = $(this).prop("checked");
     cb.draw(canvas, cg.notationMap, cg.showNotations);
     }
@@ -149,21 +165,6 @@ table, td {
     }
     echo '</script>';
   ?>
-
-</div></td><td style="border:none;">
-<div>
-<table style="float: right;">
-<?php
-for($i = 0; $i < count($moves); $i++) {
-    if($i % 2 == 0) {
-        echo "<tr><td>".($i / 2 + 1).".</td><td>".$moves[$i]."</td>";
-    } else {
-        echo '<td>'.$moves[$i]."</td></tr>";
-    }
-}
-?>
-</table>
-</div></td></tr></table>
 
 </body>
 </html>
