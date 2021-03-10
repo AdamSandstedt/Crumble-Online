@@ -740,7 +740,7 @@ class CGame {
 
   undo(gameId) {
     if(this.historyIndex == 0)
-      return;
+      return false;
     if(gameId && this.historyIndex == this.history.length)
       this.originalAction = this.action == "done" ? "done" : "";
     var moves = this.history.slice();
@@ -753,11 +753,12 @@ class CGame {
     this.history = moves;
     if(gameId)
       this.action = "done";
+    return true;
   }
 
   redo(gameId) {
     if(this.historyIndex == this.history.length)
-      return;
+      return false;
     var moves = this.history.slice();
     var index = this.historyIndex + 1;
     this.board.reset();
@@ -772,6 +773,7 @@ class CGame {
       else
         this.action = this.originalAction;
     }
+    return true;
   }
 
   findPiece(notation) {
@@ -1172,7 +1174,7 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
                             // window.location.replace("/online/view-game.php?game="+gameId);
                             window.location.reload();
                         }
-                        if(cgame.history[cgame.history.length-1] == this.responseText) {
+                        if((cgame.history.length == 0 ? "" : cgame.history[cgame.history.length-1]) == this.responseText) {
                             setTimeout(() => {
                                 this.open("GET", "/assets/php/get_move.php?game="+gameId, true);
                                 this.send();
@@ -1306,15 +1308,15 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
     // keyCode == 37 is left arrow
     if(e.keyCode == 37) {
       e.preventDefault();
-      cgame.undo(gameId);
-      redraw();
+      if(cgame.undo(gameId))
+        redraw();
     }
 
     // keyCode == 39 is right arrow
     if(e.keyCode == 39) {
       e.preventDefault();
-      cgame.redo(gameId);
-      redraw();
+      if(cgame.redo(gameId))
+        redraw();
     }
 
     // keyCode == 27 is escape
@@ -1334,13 +1336,13 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
   });
 
   $( "#previous-move" ).click(function() {
-    cgame.undo(gameId);
-    redraw();
+    if(cgame.undo(gameId))
+      redraw();
   });
 
   $( "#next-move" ).click(function() {
-    cgame.redo(gameId);
-    redraw();
+    if(cgame.redo(gameId))
+      redraw();
   });
 
   if(autoResize) {

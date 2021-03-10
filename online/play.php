@@ -163,7 +163,7 @@ for($i = 0; $i < count($moves); $i++) {
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                if(cg.history[cg.history.length-1] == this.responseText) {
+                if((cg.history.length == 0 ? "" : cg.history[cg.history.length-1]) == this.responseText) {
                     setTimeout(() => {
                         this.open("GET", "/assets/php/get_move.php?game='.$results->id.'", true);
                         this.send();
