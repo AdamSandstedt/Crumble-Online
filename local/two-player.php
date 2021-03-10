@@ -47,6 +47,8 @@ body {
     <button class="ui-button ui-widget ui-corner-all" id="end-turn">End Turn</button>
     <label for="checkbox-notations">Show Notations</label>
     <input type="checkbox" name="checkbox-1" id="checkbox-notations">
+    <button class="ui-button ui-widget ui-corner-all" id="previous-move"><</button>
+    <button class="ui-button ui-widget ui-corner-all" id="next-move">></button>
   </div>
   <br><br>
 
@@ -89,5 +91,4 @@ body {
 
 </div>
 </body>
-</html> 
-
+</html>

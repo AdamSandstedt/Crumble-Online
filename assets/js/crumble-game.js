@@ -1284,6 +1284,15 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
     }
   }
 
+  var redraw = function() {
+    if(canvas)
+      cgame.board.draw(canvas, cgame.notationMap, cgame.showNotations);
+    if(icanvas) {
+      icanvas.getContext("2d").clearRect(0, 0, icanvas.width, icanvas.height);
+      mouseHandler({offsetX: mouseHandler.prev.rawX, offsetY: mouseHandler.prev.rawY}, false);
+    }
+  }
+
   document.addEventListener("keydown", e => {
     if(e.isComposing || e.keyCode === 229) {
       return;
@@ -1298,24 +1307,14 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
     if(e.keyCode == 37) {
       e.preventDefault();
       cgame.undo(gameId);
-      if(canvas)
-        cgame.board.draw(canvas, cgame.notationMap, cgame.showNotations);
-      if(icanvas) {
-        icanvas.getContext("2d").clearRect(0, 0, icanvas.width, icanvas.height);
-        mouseHandler({offsetX: mouseHandler.prev.rawX, offsetY: mouseHandler.prev.rawY}, false);
-      }
+      redraw();
     }
 
     // keyCode == 39 is right arrow
     if(e.keyCode == 39) {
       e.preventDefault();
       cgame.redo(gameId);
-      if(canvas)
-        cgame.board.draw(canvas, cgame.notationMap, cgame.showNotations);
-      if(icanvas) {
-        icanvas.getContext("2d").clearRect(0, 0, icanvas.width, icanvas.height);
-        mouseHandler({offsetX: mouseHandler.prev.rawX, offsetY: mouseHandler.prev.rawY}, false);
-      }
+      redraw();
     }
 
     // keyCode == 27 is escape
@@ -1332,6 +1331,16 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
 
   $( "#end-turn" ).click(function() {
     endTurn();
+  });
+
+  $( "#previous-move" ).click(function() {
+    cgame.undo(gameId);
+    redraw();
+  });
+
+  $( "#next-move" ).click(function() {
+    cgame.redo(gameId);
+    redraw();
   });
 
   if(autoResize) {
