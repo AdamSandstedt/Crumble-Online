@@ -738,13 +738,15 @@ class CGame {
     this.historyIndex++;
   }
 
-  undo(gameId) {
+  undo(gameId, table) {
     if(this.historyIndex == 0)
       return false;
     if(gameId && this.historyIndex == this.history.length)
       this.originalAction = this.action == "done" ? "done" : "";
     var moves = this.history.slice();
     var index = this.historyIndex - 1;
+    if(table)
+      table.rows[Math.floor((this.historyIndex - 1) / 2)].cells[((this.historyIndex - 1) % 2) + 1].style.backgroundColor = "initial";
     this.board.reset();
     this.reset();
     for(var i = 0; i < index; i++) {
@@ -753,14 +755,18 @@ class CGame {
     this.history = moves;
     if(gameId)
       this.action = "done";
+    if(table && this.historyIndex > 0)
+      table.rows[Math.floor((this.historyIndex - 1) / 2)].cells[((this.historyIndex - 1) % 2) + 1].style.backgroundColor = "yellow";
     return true;
   }
 
-  redo(gameId) {
+  redo(gameId, table) {
     if(this.historyIndex == this.history.length)
       return false;
     var moves = this.history.slice();
     var index = this.historyIndex + 1;
+    if(table && this.historyIndex > 0)
+      table.rows[Math.floor((this.historyIndex - 1) / 2)].cells[((this.historyIndex - 1) % 2) + 1].style.backgroundColor = "initial";
     this.board.reset();
     this.reset();
     for(var i = 0; i < index; i++) {
@@ -773,6 +779,8 @@ class CGame {
       else
         this.action = this.originalAction;
     }
+    if(table)
+      table.rows[Math.floor((this.historyIndex - 1) / 2)].cells[((this.historyIndex - 1) % 2) + 1].style.backgroundColor = "yellow";
     return true;
   }
 
@@ -1142,6 +1150,7 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
         cgame.notation = cgame.notation.substr(0,i);
       }
       if(gameId) {
+        table.rows[Math.floor((cgame.historyIndex - 1) / 2)].cells[((cgame.historyIndex - 1) % 2) + 1].style.backgroundColor = "initial";
         var rows = table.rows;
         var lastRow = rows[rows.length-1];
         if(!lastRow || lastRow.cells.length == 3) {
@@ -1151,6 +1160,7 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
         }
         lastRow.insertCell();
         lastRow.cells[lastRow.cells.length-1].innerText = cgame.notation;
+        table.rows[Math.floor(cgame.historyIndex / 2)].cells[(cgame.historyIndex % 2) + 1].style.backgroundColor = "yellow";
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -1194,8 +1204,9 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
                             }
                             cgame.time = time;
                             while(cgame.historyIndex < cgame.history.length) {
-                              cgame.redo();
+                              cgame.redo(gameId, table);
                             }
+                            table.rows[Math.floor((cgame.historyIndex - 1) / 2)].cells[((cgame.historyIndex - 1) % 2) + 1].style.backgroundColor = "initial";
                             cgame.doMove(this.responseText);
                             if(cgame.winner) {
                                 // window.location.replace("/online/view-game.php?game="+gameId);
@@ -1211,6 +1222,7 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
                             }
                             lastRow.insertCell();
                             lastRow.cells[lastRow.cells.length-1].innerText = this.responseText;
+                            table.rows[Math.floor((cgame.historyIndex - 1) / 2)].cells[((cgame.historyIndex - 1) % 2) + 1].style.backgroundColor = "yellow";
                             if(cgame.timeb > -10 && cgame.timew > -10) {
                                 xmlhttp = new XMLHttpRequest();
                                 xmlhttp.onreadystatechange = function() {
@@ -1310,14 +1322,14 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
     // keyCode == 37 is left arrow
     if(e.keyCode == 37) {
       e.preventDefault();
-      if(cgame.undo(gameId))
+      if(cgame.undo(gameId, table))
         redraw();
     }
 
     // keyCode == 39 is right arrow
     if(e.keyCode == 39) {
       e.preventDefault();
-      if(cgame.redo(gameId))
+      if(cgame.redo(gameId, table))
         redraw();
     }
 
@@ -1338,12 +1350,12 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
   });
 
   $( "#previous-move" ).click(function() {
-    if(cgame.undo(gameId))
+    if(cgame.undo(gameId, table))
       redraw();
   });
 
   $( "#next-move" ).click(function() {
-    if(cgame.redo(gameId))
+    if(cgame.redo(gameId, table))
       redraw();
   });
 

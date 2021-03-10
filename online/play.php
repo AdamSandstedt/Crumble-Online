@@ -159,7 +159,8 @@ for($i = 0; $i < count($moves); $i++) {
         echo 'cg.doMove("'.$move.'", canvas);';
     }
     echo 'var table = document.getElementById("moves-table");
-    setupGraphics(cg, canvas, icanvas, true, '.$results->id.', table);';
+    setupGraphics(cg, canvas, icanvas, true, '.$results->id.', table);
+    table.rows[Math.floor((cg.historyIndex - 1) / 2)].cells[((cg.historyIndex - 1) % 2) + 1].style.backgroundColor = "yellow";';
     if(!$your_turn) {
         echo 'cg.action = "done";
         var xmlhttp = new XMLHttpRequest();
@@ -184,8 +185,9 @@ for($i = 0; $i < count($moves); $i++) {
                     }
                     cg.time = time;
                     while(cg.historyIndex < cg.history.length) {
-                      cg.redo();
+                      cg.redo('.$results->id.', table);
                     }
+                    table.rows[Math.floor((cg.historyIndex - 1) / 2)].cells[((cg.historyIndex - 1) % 2) + 1].style.backgroundColor = "initial";
                     cg.doMove(this.responseText, canvas);
                     if(cg.winner) {
                         window.location.replace("/online/view-game.php?game='.$results->id.'");
@@ -199,6 +201,7 @@ for($i = 0; $i < count($moves); $i++) {
                     }
                     lastRow.insertCell();
                     lastRow.cells[lastRow.cells.length-1].innerText = this.responseText;
+                    table.rows[Math.floor((cg.historyIndex - 1) / 2)].cells[((cg.historyIndex - 1) % 2) + 1].style.backgroundColor = "yellow";
                     if(cg.timeb && cg.timew) {
                         xmlhttp = new XMLHttpRequest();
                         xmlhttp.onreadystatechange = function() {
