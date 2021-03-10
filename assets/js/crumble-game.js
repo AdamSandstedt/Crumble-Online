@@ -1296,6 +1296,7 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
 
     // keyCode == 37 is left arrow
     if(e.keyCode == 37) {
+      e.preventDefault();
       cgame.undo(gameId);
       if(canvas)
         cgame.board.draw(canvas, cgame.notationMap, cgame.showNotations);
@@ -1307,6 +1308,7 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
 
     // keyCode == 39 is right arrow
     if(e.keyCode == 39) {
+      e.preventDefault();
       cgame.redo(gameId);
       if(canvas)
         cgame.board.draw(canvas, cgame.notationMap, cgame.showNotations);
