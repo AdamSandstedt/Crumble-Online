@@ -161,7 +161,7 @@ for($i = 0; $i < count($moves); $i++) {
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                if(cg.notation == this.responseText) {
+                if(cg.history[cg.history.length-1] == this.responseText) {
                     setTimeout(() => {
                         this.open("GET", "/assets/php/get_move.php?game='.$results->id.'", true);
                         this.send();
@@ -179,6 +179,9 @@ for($i = 0; $i < count($moves); $i++) {
                         console.log("play");
                     }
                     cg.time = time;
+                    while(cg.historyIndex < cg.history.length) {
+                      cg.redo();
+                    }
                     cg.doMove(this.responseText, canvas);
                     if(cg.winner) {
                         window.location.replace("/online/view-game.php?game='.$results->id.'");

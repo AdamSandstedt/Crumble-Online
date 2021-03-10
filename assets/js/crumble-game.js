@@ -85,7 +85,7 @@ class CPiece {
           (this.bl.y == cp.tr.y || this.tr.y == cp.bl.y) && this.bl.x < cp.tr.x && this.tr.x > cp.bl.x);
   }
 
-  // Returns true if the pieces are the same color and share a corner but not a side 
+  // Returns true if the pieces are the same color and share a corner but not a side
   // (can't form a chain but can block a capture)
   // Arguments: CPiece to check against the "this" object
   isCorner(cp) {
@@ -100,9 +100,14 @@ class CBoard {
   constructor(height, width, extra = 'n') {
     this.height = height;
     this.width = width;
+    this.extra = extra;
+    this.reset();
+  }
+
+  reset() {
     this.blMap = new Map();
     this.trMap = new Map();
-    var offset = extra == "b" ? 1 : 0;
+    var offset = this.extra == "b" ? 1 : 0;
     for(var i = 0; i < this.height; i++) {
       for(var j = 0; j < this.width; j++) {
         var cp = CPiece.make(CPoint.make(j, i), CPoint.make(j+1, i+1), (i+j+offset) % 2 == 0 ? 'w' : 'b');
@@ -161,8 +166,16 @@ class CNotation {
 class CGame {
   constructor(cboard, autoWin, time, timeb, timew) {
     this.board = cboard;
-    this.turn = 'b';
     this.autoWin = autoWin;
+    this.time = time;
+    this.timeb = timeb;
+    this.timew = timew;
+    this.originalAction = "";
+    this.reset();
+  }
+
+  reset() {
+    this.turn = 'b';
     this.hSplits = {b: new Map(), w: new Map()};
     this.vSplits = {b: new Map(), w: new Map()};
     this.joins = {b: new Map(), w: new Map()};
@@ -173,9 +186,8 @@ class CGame {
     this.action = "";
     this.notation = "";
     this.winner = undefined;
-    this.time = time;
-    this.timeb = timeb;
-    this.timew = timew;
+    this.history = [];
+    this.historyIndex = 0;
     for(let cp of this.board.blMap.values()) {
       this.neighbors.set(cp, new Set());
       this.corners.set(cp, new Set());
@@ -722,6 +734,44 @@ class CGame {
     if(icanvas)
       icanvas.getContext("2d").clearRect(0, 0, icanvas.width, icanvas.height);
     this.notation = notation;
+    this.history.push(notation);
+    this.historyIndex++;
+  }
+
+  undo(gameId) {
+    if(this.historyIndex == 0)
+      return;
+    if(gameId && this.historyIndex == this.history.length)
+      this.originalAction = this.action;
+    var moves = this.history.slice();
+    var index = this.historyIndex - 1;
+    this.board.reset();
+    this.reset();
+    for(var i = 0; i < index; i++) {
+      this.doMove(moves[i]);
+    }
+    this.history = moves;
+    if(gameId)
+      this.action = "done";
+  }
+
+  redo(gameId) {
+    if(this.historyIndex == this.history.length)
+      return;
+    var moves = this.history.slice();
+    var index = this.historyIndex + 1;
+    this.board.reset();
+    this.reset();
+    for(var i = 0; i < index; i++) {
+      this.doMove(moves[i]);
+    }
+    this.history = moves;
+    if(gameId) {
+      if(this.historyIndex < this.history.length)
+        this.action = "done";
+      else
+        this.action = this.originalAction;
+    }
   }
 
   findPiece(notation) {
@@ -1122,7 +1172,7 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
                             // window.location.replace("/online/view-game.php?game="+gameId);
                             window.location.reload();
                         }
-                        if(cgame.notation == this.responseText) {
+                        if(cgame.history[cgame.history.length-1] == this.responseText) {
                             setTimeout(() => {
                                 this.open("GET", "/assets/php/get_move.php?game="+gameId, true);
                                 this.send();
@@ -1140,6 +1190,9 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
                                 console.log("crumble-game-new");
                             }
                             cgame.time = time;
+                            while(cgame.historyIndex < cgame.history.length) {
+                              cgame.redo();
+                            }
                             cgame.doMove(this.responseText);
                             if(cgame.winner) {
                                 // window.location.replace("/online/view-game.php?game="+gameId);
@@ -1197,15 +1250,24 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
         xmlhttp.send("game=" + gameId + "&move=" + cgame.notation + (cgame.winner ? "&win="+cgame.winner : "") + "&time="+cgame.time);
       } else {
         var moves = getCookie("moves");
-        if(!moves)
+        if(!moves) {
           moves = cgame.notation;
-        else
+        } else {
+          if(cgame.historyIndex < cgame.history.length) {
+            moves = moves.split("/").slice(0,cgame.historyIndex).join("/");
+          }
           moves += "/" + cgame.notation;
+        }
         setCookie("moves", moves, 24*7);
         setCookie("boardWidth", cgame.board.width, 24*7);
         setCookie("boardHeight", cgame.board.height, 24*7);
         // console.log(cgame.notation);
       }
+      if(cgame.historyIndex < cgame.history.length) {
+        cgame.history.splice(cgame.historyIndex);
+      }
+      cgame.history.push(cgame.notation);
+      cgame.historyIndex++;
     //   cgame.notation = "";
       if(cgame.winner || gameId) {
         // console.log(cgame.winner);
@@ -1226,9 +1288,32 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
     if(e.isComposing || e.keyCode === 229) {
       return;
     }
+
     // keyCode == 13 is enter/return
     if(e.keyCode == 13) {
       endTurn();
+    }
+
+    // keyCode == 37 is left arrow
+    if(e.keyCode == 37) {
+      cgame.undo(gameId);
+      if(canvas)
+        cgame.board.draw(canvas, cgame.notationMap, cgame.showNotations);
+      if(icanvas) {
+        icanvas.getContext("2d").clearRect(0, 0, icanvas.width, icanvas.height);
+        mouseHandler({offsetX: mouseHandler.prev.rawX, offsetY: mouseHandler.prev.rawY}, false);
+      }
+    }
+
+    // keyCode == 39 is right arrow
+    if(e.keyCode == 39) {
+      cgame.redo(gameId);
+      if(canvas)
+        cgame.board.draw(canvas, cgame.notationMap, cgame.showNotations);
+      if(icanvas) {
+        icanvas.getContext("2d").clearRect(0, 0, icanvas.width, icanvas.height);
+        mouseHandler({offsetX: mouseHandler.prev.rawX, offsetY: mouseHandler.prev.rawY}, false);
+      }
     }
 
     // keyCode == 27 is escape
@@ -1253,7 +1338,7 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
   cgame.board.draw(canvas, cgame.notationMap, cgame.showNotations);
 }
 
-// Returns the value that corresponds to the 
+// Returns the value that corresponds to the
 // given key from the query string in the url
 // Arguments: name of the parameter to find
 // function getParameterByName(name, url = window.location.href) {
@@ -1263,4 +1348,3 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
 //   if (!results[2]) return '';
 //   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 // }
-
