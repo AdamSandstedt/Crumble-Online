@@ -58,6 +58,7 @@ body {
 //       var w = parseInt(getParameterByName("width"));
       var h = parseInt(getCookie("boardHeight"));
       var w = parseInt(getCookie("boardWidth"));
+      var extra = getCookie("extra");
       if(!h || !w) {
         console.log('"boardHeight" and "boardWidth" cookies not found');
         return;
@@ -71,7 +72,7 @@ body {
       icanvas.width = pixelDensity*w;
       icanvas.height = pixelDensity*h;
 
-      var cb = new CBoard(h, w);
+      var cb = new CBoard(h, w, extra);
       var cg = new CGame(cb);
       setupGraphics(cg, canvas, icanvas, true, false);
       var m = getCookie("moves");

@@ -100,9 +100,15 @@ body {
       setCookie("boardWidth", document.getElementById("spinner-width").value, 1);
       setCookie("boardHeight", document.getElementById("spinner-height").value, 1);
       setCookie("moves", "", -1);
+      if($("#spinner-height").spinner("value") % 2 == 1 && $("#spinner-width").spinner("value") % 2 == 1) {
+        var extra = $("#extra").val() == "Black" ? "b" : "w";
+      } else {
+        var extra = "n";
+      }
+      setCookie("extra", extra, 1);
       window.location = "/local/two-player.php";
     });
-    
+
     $( "#create-as-black" ).click(function() {
       if($("#spinner-height").spinner("value") % 2 == 1 && $("#spinner-width").spinner("value") % 2 == 1) {
         var extra = $("#extra").val() == "Black" ? "b" : "w";
@@ -127,7 +133,7 @@ body {
       }
       window.location.replace("/online/create-challenge.php?width=" + document.getElementById("spinner-width").value + "&height=" + document.getElementById("spinner-height").value + "&play=" + (Math.random() < 0.5 ? "b" : "w") + "&extra=" + extra);
     });
-    
+
     $( "#extra" ).selectmenu();
   });
   </script>
@@ -247,7 +253,7 @@ body {
                     });
                     });</script>';
                 }
-                
+
                 echo '</div><br>';
             }
         }
@@ -269,5 +275,4 @@ body {
 
   </div>
 </body>
-</html> 
-
+</html>

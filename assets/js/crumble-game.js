@@ -1054,6 +1054,7 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
               setCookie("moves", moves, 24*7);
               setCookie("boardWidth", cgame.board.width, 24*7);
               setCookie("boardHeight", cgame.board.height, 24*7);
+              setCookie("extra", cgame.board.extra, 24*7);
             }
           }
           icontext.clearRect(0, 0, icanvas.width, icanvas.height);
@@ -1263,6 +1264,7 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
         setCookie("moves", moves, 24*7);
         setCookie("boardWidth", cgame.board.width, 24*7);
         setCookie("boardHeight", cgame.board.height, 24*7);
+        setCookie("extra", cgame.board.extra, 24*7);
         // console.log(cgame.notation);
       }
       if(cgame.historyIndex < cgame.history.length) {
