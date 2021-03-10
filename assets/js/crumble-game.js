@@ -742,7 +742,7 @@ class CGame {
     if(this.historyIndex == 0)
       return;
     if(gameId && this.historyIndex == this.history.length)
-      this.originalAction = this.action;
+      this.originalAction = this.action == "done" ? "done" : "";
     var moves = this.history.slice();
     var index = this.historyIndex - 1;
     this.board.reset();
