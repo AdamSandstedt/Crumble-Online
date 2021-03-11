@@ -160,7 +160,8 @@ for($i = 0; $i < count($moves); $i++) {
     }
     echo 'var table = document.getElementById("moves-table");
     setupGraphics(cg, canvas, icanvas, true, '.$results->id.', table);
-    table.rows[Math.floor((cg.historyIndex - 1) / 2)].cells[((cg.historyIndex - 1) % 2) + 1].style.backgroundColor = "yellow";';
+    if(cg.historyIndex > 0)
+      table.rows[Math.floor((cg.historyIndex - 1) / 2)].cells[((cg.historyIndex - 1) % 2) + 1].style.backgroundColor = "yellow";';
     if(!$your_turn) {
         echo 'cg.action = "done";
         var xmlhttp = new XMLHttpRequest();
@@ -187,7 +188,8 @@ for($i = 0; $i < count($moves); $i++) {
                     while(cg.historyIndex < cg.history.length) {
                       cg.redo('.$results->id.', table);
                     }
-                    table.rows[Math.floor((cg.historyIndex - 1) / 2)].cells[((cg.historyIndex - 1) % 2) + 1].style.backgroundColor = "initial";
+                    if(cg.historyIndex > 0)
+                      table.rows[Math.floor((cg.historyIndex - 1) / 2)].cells[((cg.historyIndex - 1) % 2) + 1].style.backgroundColor = "initial";
                     cg.doMove(this.responseText, canvas);
                     if(cg.winner) {
                         window.location.replace("/online/view-game.php?game='.$results->id.'");
