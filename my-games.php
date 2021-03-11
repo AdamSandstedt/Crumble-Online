@@ -101,7 +101,10 @@ table, td {
   if(isset($_COOKIE["boardHeight"])) {
     $height = $_COOKIE["boardHeight"];
   }
-  if(isset($moves) && isset($width) && isset($height)) {
+  if(isset($_COOKIE["extra"])) {
+    $extra = $_COOKIE["extra"];
+  }
+  if(isset($moves) && isset($width) && isset($height) && isset($extra)) {
     echo '<div style="border:solid; border-width:2px; width:fit-content">';
     echo '<a href="/local/two-player.php">
     Local Game
@@ -123,7 +126,7 @@ table, td {
     var canvas = document.getElementById("crumble-canvas");
     canvas.width = pixelDensity*'.$width.';
     canvas.height = pixelDensity*'.$height.';
-    var cb = new CBoard('.$height.', '.$width.');
+    var cb = new CBoard('.$height.', '.$width.', "'.$extra.'");
     var cg = new CGame(cb);
     setupGraphics(cg, canvas, undefined, false, false);';
     foreach($moves as $move) {
@@ -133,7 +136,7 @@ table, td {
 
   }
     echo '<h3>Online Games:</h3>';
-    
+
   if(isset($user) && $user->isLoggedIn()) {
     $id = $user->data()->id;
     $query = $db->query("SELECT * FROM games_current WHERE user_id_black = ? OR user_id_white = ? ORDER BY time DESC", [$id, $id], array());
@@ -282,7 +285,7 @@ table, td {
     xmlhttp.open("GET", "/assets/php/get_games.php", true);
     xmlhttp.send();
   </script>
-  
+
   </div>
 </body>
 </html>
