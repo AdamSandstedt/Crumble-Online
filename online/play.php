@@ -271,12 +271,13 @@ for($i = 0; $i < count($moves); $i++) {
     echo '
     (function updateTime() {
     var player = "'.$player.'";
-    if((cg.turn == "b" ? cg.timew : cg.timeb) > 0 && cg.time) {
+    var turn = cg.history.length % 2 == 0 ? "b" : "w";
+    if((turn == "b" ? cg.timew : cg.timeb) > 0 && cg.time) {
         var now = Math.floor(new Date().getTime() / 1000);
-        var countDownDate = +cg.time + (cg.turn == "b" ? +cg.timeb : +cg.timew);
+        var countDownDate = +cg.time + (turn == "b" ? +cg.timeb : +cg.timew);
         var distance = countDownDate - now;
     } else {
-        var distance = cg.turn == "b" ? cg.timeb : cg.timew;
+        var distance = turn == "b" ? cg.timeb : cg.timew;
     }
     // console.log(+cg.time, cg.timeb, cg.timew);
 
@@ -285,11 +286,11 @@ for($i = 0; $i < count($moves); $i++) {
     var seconds = Math.floor(distance % 60);
     // console.log(now, distance, cg.time);
 
-    document.getElementById(cg.turn == "b" ? "time-black" : "time-white").innerHTML = (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+    document.getElementById(turn == "b" ? "time-black" : "time-white").innerHTML = (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     if (distance <= 0) {
-    document.getElementById(cg.turn == "b" ? "time-black" : "time-white").innerHTML = "out of time";
+    document.getElementById(turn == "b" ? "time-black" : "time-white").innerHTML = "out of time";
     if(distance <= -10) {
-        cg.winner = cg.turn == "b" ? "w" : "b";
+        cg.winner = turn == "b" ? "w" : "b";
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -302,20 +303,20 @@ for($i = 0; $i < count($moves); $i++) {
         };
         xmlhttp.open("POST", "/assets/php/submit-move.php", true);
         xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xmlhttp.send("game='.$results->id.'&move=done&win=" + (cg.turn == "b" ? "w" : "b") + "&time="+Math.floor(new Date().getTime() / 1000));
+        xmlhttp.send("game='.$results->id.'&move=done&win=" + (turn == "b" ? "w" : "b") + "&time="+Math.floor(new Date().getTime() / 1000));
     }
     }
     var distance1 = distance;
 
-    distance = cg.turn == "b" ? cg.timew : cg.timeb;
+    distance = turn == "b" ? cg.timew : cg.timeb;
     var hours = Math.floor(distance / (60 * 60));
     var minutes = Math.floor((distance % (60 * 60)) / 60);
     var seconds = Math.floor(distance % 60);
-    document.getElementById(cg.turn == "b" ? "time-white" : "time-black").innerHTML = (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+    document.getElementById(turn == "b" ? "time-white" : "time-black").innerHTML = (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     if (distance <= 0) {
-    document.getElementById(cg.turn == "b" ? "time-white" : "time-black").innerHTML = "out of time";
+    document.getElementById(turn == "b" ? "time-white" : "time-black").innerHTML = "out of time";
     if(distance <= -10) {
-        cg.winner = cg.turn == "b" ? "w" : "b";
+        cg.winner = turn == "b" ? "w" : "b";
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -330,13 +331,13 @@ for($i = 0; $i < count($moves); $i++) {
         };
         xmlhttp.open("POST", "/assets/php/submit-move.php", true);
         xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xmlhttp.send("game='.$results->id.'&move=done&win=" + (cg.turn == "b" ? "w" : "b") + "&time="+Math.floor(new Date().getTime() / 1000));
+        xmlhttp.send("game='.$results->id.'&move=done&win=" + (turn == "b" ? "w" : "b") + "&time="+Math.floor(new Date().getTime() / 1000));
     }
     }
     if(distance1 <= 0 || distance <= 0) {
         cg.action = "done";
     } else {
-        if(cg.action == "done" && player == cg.turn)
+        if(cg.action == "done" && player == turn)
             cg.action = "";
     }
 
