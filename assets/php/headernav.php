@@ -54,6 +54,7 @@
   <a href="/new.php">New Game</a>
   <a href="/my-games.php">Continue Game</a>
   <a href="/previous-games.php">Previous Games</a>
+  <a href="/online/search-games.php">Search Games</a>
   <a href="http://www.playcrumble.com/rules" target="_blank">How to Play</a>
   <a href="/contact.php">Contact</a>
 </div>

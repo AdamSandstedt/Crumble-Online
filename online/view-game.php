@@ -10,7 +10,7 @@ $query = $db->query('SELECT * FROM games_completed WHERE id = ?', [$_GET["game"]
 if($db->error())
     file_put_contents ("error_log", "view-game line 9: ".$db->errorString(), FILE_APPEND);
 $results = $query->first();
-if($db->count() == 0 || $user->data()->id != $results->user_id_black && $user->data()->id != $results->user_id_white){die();}
+if($db->count() == 0){die();}
 ?>
 
 <style>
