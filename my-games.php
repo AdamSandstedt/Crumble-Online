@@ -109,7 +109,7 @@ table, td {
     echo '<a href="/local/two-player.php">
     <table style="border:none;"><tr><td style="border:none; vertical-align:top">
     Local Game
-    </td></tr><tr><td style=border:none; vertical-align:top">
+    </td></tr><tr><td style="border:none; vertical-align:top">
     <div style="position: relative; width: fit-content; height: fit-content">
     <canvas id="crumble-canvas"
         style="border:1px solid black; position: relative; width: 400px; height: '. $height/$width*400 .'px"></canvas>
