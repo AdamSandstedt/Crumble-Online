@@ -107,10 +107,13 @@ table, td {
   if(isset($moves) && isset($width) && isset($height) && isset($extra)) {
     echo '<div style="border:solid; border-width:2px; width:fit-content">';
     echo '<a href="/local/two-player.php">
+    <table style="border:none;"><tr><td style="border:none; vertical-align:top">
     Local Game
+    </td></tr><tr><td style=border:none; vertical-align:top">
     <div style="position: relative; width: fit-content; height: fit-content">
     <canvas id="crumble-canvas"
         style="border:1px solid black; position: relative; width: 400px; height: '. $height/$width*400 .'px"></canvas>
+    </td><td style="border:none; vertical-align:top;">
     </div><table>';
     $moves = explode("/", $moves);
     for($i = 0; $i < count($moves); $i++) {
@@ -120,7 +123,7 @@ table, td {
             echo '<td>'.$moves[$i]."</td></tr>";
         }
     }
-    echo '</table></a></div><br>';
+    echo '</table></table></a></div><br>';
     echo '<script>$(function() {
     const pixelDensity = 128;
     var canvas = document.getElementById("crumble-canvas");
@@ -156,7 +159,8 @@ table, td {
         if($row->user_id_black == $user->data()->id && count($moves) % 2 == 1 || $row->user_id_white == $user->data()->id && count($moves) % 2 == 0)
             continue;
         echo '<div style="border:solid; border-width:2px; width:fit-content">';
-        echo '<a href="/online/play.php?game='.$row->id.'">';
+        echo '<a href="/online/play.php?game='.$row->id.'">
+        <table style="border:none;"><tr><td style="border:none; vertical-align:top">';
         if($row->user_id_black == $user->data()->id) {
             echo $user->data()->username;
         } else {
@@ -174,11 +178,11 @@ table, td {
                 file_put_contents ("error_log", "my-games line 165: ".$db->errorString(), FILE_APPEND);
             echo $query->first()->username;
         }
-        echo '<div style="position: relative; width: fit-content; height: fit-content">
+        echo '</td></tr><tr><td style="border:none; vertical-align:top"><div style="position: relative; width: fit-content; height: fit-content">
     <canvas id="crumble-canvas'.$row->id.'"
       style="border:1px solid black; position: relative; width: 400px; height: '. $row->height/$row->width*400 .'px"></canvas>
     </div>';
-        echo '<table>';
+        echo '</td><td style="border:none; vertical-align:top"><table>';
         for($i = 0; $i < count($moves); $i++) {
             if($i % 2 == 0) {
                 echo "<tr><td>".($i / 2 + 1).".</td><td>".$moves[$i]."</td>";
@@ -186,7 +190,7 @@ table, td {
                 echo '<td>'.$moves[$i]."</td></tr>";
             }
         }
-        echo '</table></a></div><br>';
+        echo '</table></table></a></div><br>';
         echo '<script>your_turn++;
         $(function() {
         const pixelDensity = 128;
@@ -210,7 +214,8 @@ table, td {
         if($row->user_id_black == $user->data()->id && count($moves) % 2 == 0 || $row->user_id_white == $user->data()->id && count($moves) % 2 == 1)
             continue;
         echo '<div style="border:solid; border-width:2px; width:fit-content">';
-        echo '<a href="/online/play.php?game='.$row->id.'">';
+        echo '<a href="/online/play.php?game='.$row->id.'">
+        <table style="border:none;"><tr><td style="border:none; vertical-align:top">';
         if($row->user_id_black == $user->data()->id) {
             echo $user->data()->username;
         } else {
@@ -228,11 +233,11 @@ table, td {
                 file_put_contents ("error_log", "my-games line 218: ".$db->errorString(), FILE_APPEND);
             echo $query->first()->username;
         }
-        echo '<div style="position: relative; width: fit-content; height: fit-content">
+        echo '</td></tr><tr><td style="border:none; vertical-align:top"><div style="position: relative; width: fit-content; height: fit-content">
     <canvas id="crumble-canvas'.$row->id.'"
       style="border:1px solid black; position: relative; width: 400px; height: '. $row->height/$row->width*400 .'px"></canvas>
     </div>';
-        echo '<table>';
+        echo '</td><td style="border:none; vertical-align:top"><table>';
         for($i = 0; $i < count($moves); $i++) {
             if($i % 2 == 0) {
                 echo "<tr><td>".($i / 2 + 1).".</td><td>".$moves[$i]."</td>";
@@ -240,7 +245,7 @@ table, td {
                 echo '<td>'.$moves[$i]."</td></tr>";
             }
         }
-        echo '</table></a></div><br>';
+        echo '</table></table></a></div><br>';
         echo '<script>opponents_turn++;
         $(function() {
         const pixelDensity = 128;

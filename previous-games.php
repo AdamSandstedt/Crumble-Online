@@ -59,7 +59,8 @@ table, td {
       else
           $moves = explode("\r\n", $row->moves);
       echo '<div style="border:solid; border-width:2px; width:fit-content">';
-      echo '<a href="/online/view-game.php?game='.$row->id.'">';
+      echo '<a href="/online/view-game.php?game='.$row->id.'">
+      <table style="border:none;"><tr><td style="border:none; vertical-align:top">';
       if($row->user_id_black == $user->data()->id) {
           echo $user->data()->username;
       } else {
@@ -77,11 +78,11 @@ table, td {
               file_put_contents ("error_log", "previous-games line 121: ".$db->errorString(), FILE_APPEND);
           echo $query->first()->username;
       }
-      echo '<div style="position: relative; width: fit-content; height: fit-content">
+      echo '</td></tr><tr><td style="border:none; vertical-align:top"><div style="position: relative; width: fit-content; height: fit-content">
   <canvas id="crumble-canvas'.$row->id.'"
     style="border:1px solid black; position: relative; width: 400px; height: '. $row->height/$row->width*400 .'px"></canvas>
   </div>';
-      echo '<table>';
+      echo '</td><td style="border:none; vertical-align:top"><table>';
       for($i = 0; $i < count($moves); $i++) {
           if($i % 2 == 0) {
               echo "<tr><td>".($i / 2 + 1).".</td><td>".$moves[$i]."</td>";
@@ -89,7 +90,7 @@ table, td {
               echo '<td>'.$moves[$i]."</td></tr>";
           }
       }
-      echo '</table></a></div><br>';
+      echo '</table></table></a></div><br>';
       echo '<script>$(function() {
       const pixelDensity = 128;
       var canvas = document.getElementById("crumble-canvas'.$row->id.'");
