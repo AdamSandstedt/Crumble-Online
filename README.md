@@ -10,16 +10,20 @@ Instructions for running this code locally:
 
 I use xampp because it's convenient but you just need some way to run an apache server and a SQL database.
 
+- To setup the database, run the queries shown below. They will create the database, a user for UserSpice
+  to use, and the tables that the site uses to keep track of the games and challenges.
 - Clone the repo into the directory where your public html files go. (For xampp: xampp/htdocs)
 - Open up the site in your browser (probably http://localhost)
-- Go through the steps to setup UserSpice (if using xampp: Database Host is localhost)
+- Go through the steps to setup UserSpice (Database Host is probably localhost, username is username and password is password)
 - Once UserSpice is setup, either delete the install directory or delete the if statement at the start of index.php that checks if install/index.php exists
 - The default login info for UserSpice should be username: admin, password: password
-- To setup the database run the queries shown below. They will create the tables that the site uses to keep
-track of the games and challenges. If you named your database something other than crumble, you will need
-to change the name in the first line of each query.
 
 ```
+CREATE DATABASE `crumble`;
+
+CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON `crumble`.* TO 'username'@'localhost';
+
 CREATE TABLE `crumble`.`games_completed` (
   `id` int(11) NOT NULL,
   `user_id_black` int(11) NOT NULL,
