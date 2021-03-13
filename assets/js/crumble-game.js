@@ -1022,10 +1022,16 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
 
   function mouseHandler(e, clicked) {
     const icontext = icanvas.getContext('2d');
-    mouseHandler.prev.rawX = e.offsetX;
-    mouseHandler.prev.rawY = e.offsetY;
-    var x = Math.round(e.offsetX * icanvas.width / parseInt(icanvas.style.width));
-    var y = Math.round(e.offsetY * icanvas.height / parseInt(icanvas.style.height));
+    if(!e.offsetX) {
+      var rect = e.target.getBoundingClientRect();
+      var x  = (e.targetTouches[0].pageX - rect.left) * icanvas.width / icanvas.style.width.substr(0,icanvas.style.width.length-2);
+      var y   = (e.targetTouches[0].pageY - rect.top) * icanvas.height / icanvas.style.height.substr(0,icanvas.style.height.length-2);
+    } else {
+      mouseHandler.prev.rawX = e.offsetX;
+      mouseHandler.prev.rawY = e.offsetY;
+      var x = Math.round(e.offsetX * icanvas.width / parseInt(icanvas.style.width));
+      var y = Math.round(e.offsetY * icanvas.height / parseInt(icanvas.style.height));
+    }
 
     const l = 4;
     icontext.fillStyle = "red";
@@ -1140,6 +1146,12 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
     });
     icanvas.addEventListener('click', e => {
       mouseHandler(e, true);
+    });
+    icanvas.addEventListener('touchmove', e => {
+      if(e.touches.length == 1) {
+        e.preventDefault();
+        mouseHandler(e, false);
+      }
     });
   }
 
