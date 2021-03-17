@@ -52,7 +52,6 @@ body {
     $( "input[type='radio']" ).checkboxradio({
       icon: false,
     });
-    $( "#radio-single-player" ).checkboxradio( "disable" );
     document.getElementById("radio-online").onclick = function() {
       document.getElementById("select-players").style.display = "none";
       document.getElementById("select-challenge").style.display = "";
@@ -106,7 +105,12 @@ body {
         var extra = "n";
       }
       setCookie("extra", extra, 1);
-      window.location = "/local/two-player.php";
+      if($('#radio-two-player').is(':checked')) {
+        window.location = "/local/two-player.php";
+      } else {
+        setCookie("ai-player", "w", 1);
+        window.location = "/local/single-player.php";
+      }
     });
 
     $( "#create-as-black" ).click(function() {
