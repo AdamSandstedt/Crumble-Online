@@ -38,17 +38,20 @@ table, td {
   $( function() {
     $( "input[type='checkbox']" ).checkboxradio();
 
+    var depth = parseInt(getCookie("ai-depth"));
+    if(isNaN(depth))
+      depth = 1;
     $( "#slider-depth" ).slider({
       min: 1,
       max: 6,
-      value: parseInt(getCookie("ai-depth")),
+      value: depth,
       slide: function( event, ui ) {
         var x = ui.value;
         document.getElementById("label-depth").innerHTML = "AI Depth: " + x;
         setCookie("ai-depth", x, 24*7);
       },
     });
-    document.getElementById("label-depth").innerHTML = "AI Depth: " + getCookie("ai-depth");
+    document.getElementById("label-depth").innerHTML = "AI Depth: " + depth;
   });
   </script>
 </head>
