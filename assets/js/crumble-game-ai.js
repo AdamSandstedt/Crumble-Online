@@ -1023,7 +1023,9 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table, playAs
     var cg = new CGame();
     cg.loadFromGame(cgame);
     var historyIndex = cgame.historyIndex;
+    document.getElementById("thinking-text").innerHTML = "&nbsp- thinking";
     var alphabeta = await minmax(cg, gameRules, evaluate, depth);
+    document.getElementById("thinking-text").innerHTML = "";
     console.log(alphabeta.bestMove, depth, alphabeta.evaluation);
     var moves = getCookie("moves");
     if(historyIndex < cgame.history.length) {

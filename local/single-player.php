@@ -77,7 +77,7 @@ table, td {
     <button class="ui-button ui-widget ui-corner-all" id="next-move">></button>
     <button class="ui-button ui-widget ui-corner-all" id="last-move">>></button>
     <br>
-    <label for="slider-depth" id="label-depth"></label>
+    <label for="slider-depth" id="label-depth"></label><p style="display: inline-block" id="thinking-text"></p>
     <div id="slider-depth" style="width:300px"></div>
   </div>
   <br><br>
