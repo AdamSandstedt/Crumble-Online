@@ -1023,9 +1023,11 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table) {
   function mouseHandler(e, clicked) {
     const icontext = icanvas.getContext('2d');
     if(!e.offsetX) {
-      var rect = e.target.getBoundingClientRect();
-      var x  = (e.targetTouches[0].pageX - rect.left) * icanvas.width / icanvas.style.width.substr(0,icanvas.style.width.length-2);
-      var y   = (e.targetTouches[0].pageY - rect.top) * icanvas.height / icanvas.style.height.substr(0,icanvas.style.height.length-2);
+      if(e.target) {
+        var rect = e.target.getBoundingClientRect();
+        var x  = (e.targetTouches[0].pageX - rect.left) * icanvas.width / icanvas.style.width.substr(0,icanvas.style.width.length-2);
+        var y   = (e.targetTouches[0].pageY - rect.top) * icanvas.height / icanvas.style.height.substr(0,icanvas.style.height.length-2);
+      }
     } else {
       mouseHandler.prev.rawX = e.offsetX;
       mouseHandler.prev.rawY = e.offsetY;
