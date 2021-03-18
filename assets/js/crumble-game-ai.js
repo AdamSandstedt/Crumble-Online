@@ -1013,14 +1013,20 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table, playAs
     nextState : nextState,
     terminalStateEval : terminalStateEval,
   }
-  function startAI() {
+  async function startAI() {
     if(cgame.winner || cgame.turn != playAs)
       return;
+    cgame.action = "done";
+    if(mouseHandler.prev)
+      mouseHandler({offsetX: mouseHandler.prev.rawX, offsetY: mouseHandler.prev.rawY}, false);
     var depth = $("#slider-depth").slider("value");
-    var alphabeta = minmax(cgame, gameRules, evaluate, depth);
+    var cg = new CGame();
+    cg.loadFromGame(cgame);
+    var historyIndex = cgame.historyIndex;
+    var alphabeta = await minmax(cg, gameRules, evaluate, depth);
     console.log(alphabeta.bestMove, depth, alphabeta.evaluation);
     var moves = getCookie("moves");
-    if(cgame.historyIndex < cgame.history.length) {
+    if(historyIndex < cgame.history.length) {
       moves = moves.split("/").slice(0,cgame.historyIndex).join("/");
     }
     if(!moves) {
@@ -1034,6 +1040,8 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table, playAs
     setCookie("extra", cgame.board.extra, 24*7);
     setCookie("ai-player", playAs, 24*7);
     setCookie("ai-depth", depth, 24*7);
+    while(cgame.historyIndex < cgame.history.length)
+      cgame.redo(table);
     if(cgame.historyIndex > 0)
       table.rows[Math.floor((cgame.historyIndex - 1) / 2)].cells[((cgame.historyIndex - 1) % 2) + 1].style.backgroundColor = "initial";
     var rows = table.rows;
@@ -1049,8 +1057,9 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table, playAs
     cgame.doMove(alphabeta.bestMove);
     if(canvas)
       cgame.board.draw(canvas, cgame.notationMap, cgame.showNotations);
+    mouseHandler({offsetX: mouseHandler.prev.rawX, offsetY: mouseHandler.prev.rawY}, false);
   }
-  if(playAs == "b") {
+  if(playAs == cgame.turn) {
     startAI();
   }
 
@@ -1463,11 +1472,13 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table, playAs
       cgame.updateSplitsJoins();
       icanvas.getContext("2d").clearRect(0, 0, icanvas.width, icanvas.height);
       mouseHandler({offsetX: mouseHandler.prev.rawX, offsetY: mouseHandler.prev.rawY}, false);
+      startAI();
     }
-    startAI();
   }
 
   var redraw = function() {
+    if(cgame.turn == playAs || cgame.history.length % 2 == (playAs == "b" ? 0 : 1))
+      cgame.action = "done";
     if(canvas)
       cgame.board.draw(canvas, cgame.notationMap, cgame.showNotations);
     if(icanvas) {
