@@ -72,8 +72,10 @@ table, td {
     <button class="ui-button ui-widget ui-corner-all" id="end-turn">End Turn</button>
     <label for="checkbox-notations">Show Notations</label>
     <input type="checkbox" name="checkbox-1" id="checkbox-notations">
+    <button class="ui-button ui-widget ui-corner-all" id="first-move"><<</button>
     <button class="ui-button ui-widget ui-corner-all" id="previous-move"><</button>
     <button class="ui-button ui-widget ui-corner-all" id="next-move">></button>
+    <button class="ui-button ui-widget ui-corner-all" id="last-move">>></button>
     <br>
     <label for="slider-depth" id="label-depth"></label>
     <div id="slider-depth" style="width:300px"></div>

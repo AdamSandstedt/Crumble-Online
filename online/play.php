@@ -106,8 +106,10 @@ table, td {
     <button class="ui-button ui-widget ui-corner-all" id="end-turn">End Turn</button>
     <label for="checkbox-notations">Show Notations</label>
     <input type="checkbox" name="checkbox-1" id="checkbox-notations">
+    <button class="ui-button ui-widget ui-corner-all" id="first-move"><<</button>
     <button class="ui-button ui-widget ui-corner-all" id="previous-move"><</button>
     <button class="ui-button ui-widget ui-corner-all" id="next-move">></button>
+    <button class="ui-button ui-widget ui-corner-all" id="last-move">>></button>
     <br>
     <button class="ui-button ui-widget ui-corner-all" id="copy-to-local">Copy Game to Local</button>
   </div>

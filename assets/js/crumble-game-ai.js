@@ -1527,6 +1527,13 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table, playAs
     endTurn();
   });
 
+  $( "#first-move" ).click(function() {
+    while(cgame.historyIndex > 0) {
+      if(cgame.undo(table))
+        redraw();
+    }
+  });
+
   $( "#previous-move" ).click(function() {
     if(cgame.undo(table))
       redraw();
@@ -1535,6 +1542,13 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table, playAs
   $( "#next-move" ).click(function() {
     if(cgame.redo(table))
       redraw();
+  });
+
+  $( "#last-move" ).click(function() {
+    while(cgame.historyIndex < cgame.history.length) {
+      if(cgame.redo(table))
+        redraw();
+    }
   });
 
   if(autoResize) {
