@@ -80,6 +80,9 @@ table, td {
         return;
       }
 
+      if(getCookie("ai-player"))
+        setCookie("ai-player", "", -1);
+
       const pixelDensity = 128;
       var canvas = document.getElementById('crumble-canvas');
       canvas.width = pixelDensity*w;

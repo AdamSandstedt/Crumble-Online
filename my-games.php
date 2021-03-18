@@ -106,8 +106,11 @@ table, td {
   }
   if(isset($moves) && isset($width) && isset($height) && isset($extra)) {
     echo '<div style="border:solid; border-width:2px; width:fit-content">';
-    echo '<a href="/local/two-player.php">
-    <table style="border:none;"><tr><td style="border:none; vertical-align:top">
+    if(isset($_COOKIE["ai-player"]))
+      echo '<a href="/local/single-player.php">';
+    else
+      echo '<a href="/local/two-player.php">';
+    echo '<table style="border:none;"><tr><td style="border:none; vertical-align:top">
     Local Game
     </td></tr><tr><td style="border:none; vertical-align:top">
     <div style="position: relative; width: fit-content; height: fit-content">
