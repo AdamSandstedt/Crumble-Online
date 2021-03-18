@@ -1033,6 +1033,7 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table, playAs
     setCookie("boardHeight", cgame.board.height, 24*7);
     setCookie("extra", cgame.board.extra, 24*7);
     setCookie("ai-player", playAs, 24*7);
+    setCookie("ai-depth", depth, 24*7);
     if(cgame.historyIndex > 0)
       table.rows[Math.floor((cgame.historyIndex - 1) / 2)].cells[((cgame.historyIndex - 1) % 2) + 1].style.backgroundColor = "initial";
     var rows = table.rows;
@@ -1419,11 +1420,13 @@ function setupGraphics(cgame, canvas, icanvas, autoResize, gameId, table, playAs
       } else {
         moves += "/" + cgame.notation;
       }
+      var depth = $("#slider-depth").slider("value");
       setCookie("moves", moves, 24*7);
       setCookie("boardWidth", cgame.board.width, 24*7);
       setCookie("boardHeight", cgame.board.height, 24*7);
       setCookie("extra", cgame.board.extra, 24*7);
       setCookie("ai-player", playAs, 24*7);
+      setCookie("ai-depth", depth, 24*7);
       if(cgame.historyIndex < cgame.history.length) {
         var extraRows = Math.floor((cgame.history.length - 1) / 2) - Math.floor((cgame.historyIndex - 1) / 2);
         cgame.history.splice(cgame.historyIndex);

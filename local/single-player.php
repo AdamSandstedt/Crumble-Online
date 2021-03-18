@@ -41,12 +41,14 @@ table, td {
     $( "#slider-depth" ).slider({
       min: 1,
       max: 6,
-      value: 1,
+      value: parseInt(getCookie("ai-depth")),
       slide: function( event, ui ) {
         var x = ui.value;
         document.getElementById("label-depth").innerHTML = "AI Depth: " + x;
+        setCookie("ai-depth", x, 24*7);
       },
     });
+    document.getElementById("label-depth").innerHTML = "AI Depth: " + getCookie("ai-depth");
   });
   </script>
 </head>
@@ -70,7 +72,7 @@ table, td {
     <button class="ui-button ui-widget ui-corner-all" id="previous-move"><</button>
     <button class="ui-button ui-widget ui-corner-all" id="next-move">></button>
     <br>
-    <label for="slider-depth" id="label-depth">AI Depth: 1</label>
+    <label for="slider-depth" id="label-depth"></label>
     <div id="slider-depth" style="width:300px"></div>
   </div>
   <br><br>
@@ -105,7 +107,6 @@ table, td {
 
       var AIPlayer = getCookie("ai-player");
       var table = document.getElementById("moves-table");
-      setupGraphics(cg, canvas, icanvas, true, undefined, table, AIPlayer);
       var m = getCookie("moves");
       if(m) {
         var moves = m.split("/");
@@ -122,7 +123,11 @@ table, td {
           lastRow.cells[lastRow.cells.length-1].innerText = cg.notation;
         }
         table.rows[Math.floor((cg.historyIndex - 1) / 2)].cells[((cg.historyIndex - 1) % 2) + 1].style.backgroundColor = "yellow";
+        if(cg.turn == AIPlayer) {
+          cg.action = "done";
+        }
       }
+      setupGraphics(cg, canvas, icanvas, true, undefined, table, AIPlayer);
 
       document.getElementById("checkbox-notations").onclick = function() {
         cg.showNotations = $(this).prop('checked');
