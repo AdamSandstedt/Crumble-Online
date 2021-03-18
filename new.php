@@ -68,6 +68,12 @@ body {
       document.getElementById("div-open-challenges").style.display = "none";
       document.getElementById("div-create-challenge").style.display = "";
     }
+    document.getElementById("radio-single-player").onclick = function() {
+      document.getElementById("ai-play-as-div").style.display = "";
+    }
+    document.getElementById("radio-two-player").onclick = function() {
+      document.getElementById("ai-play-as-div").style.display = "none";
+    }
 
     $( ".spinner-size" ).spinner({
       min: 2,
@@ -106,9 +112,11 @@ body {
       }
       setCookie("extra", extra, 1);
       if($('#radio-two-player').is(':checked')) {
+        setCookie("ai-player", "", -1);
         window.location = "/local/two-player.php";
       } else {
-        setCookie("ai-player", "w", 1);
+        var playAs = $("#ai-play-as").val() == "Black" ? "b" : "w";
+        setCookie("ai-player", playAs, 1);
         window.location = "/local/single-player.php";
       }
     });
@@ -139,6 +147,7 @@ body {
     });
 
     $( "#extra" ).selectmenu();
+    $( "#ai-play-as" ).selectmenu();
   });
   </script>
   <?php
@@ -184,17 +193,24 @@ body {
       <input type="radio" name="radio-1" id="radio-online">';
       }
       if(isset($user) && $user->isLoggedIn()) {
-      echo '<fieldset style="border: 2px solid black; display: none" id="select-players">';
+      echo '<fieldset style="border: 2px solid black; display: none; height: 180px;" id="select-players">';
       } else {
-      echo '<fieldset style="border: 2px solid black;" id="select-players">';
+      echo '<fieldset style="border: 2px solid black; height: 180px;" id="select-players">';
       }
       echo '<label for="radio-two-player" class="radio-label">Two Player</label>
         <input type="radio" name="radio-2" id="radio-two-player" Checked>
         <br>
+        <table><tr><td>
         <label for="radio-single-player" class="radio-label">Single Player</label>
         <input type="radio" name="radio-2" id="radio-single-player">
+        </td><td>
+        <div id="ai-play-as-div" style="display:none;"><label for="ai-play-as">AI plays as: </label>
+        <select name="ai-play-as" id="ai-play-as">
+        <option>Black</option>
+        <option>White</option>
+        </select></div></td></tr></table>
         <br>
-        <button class="ui-button ui-widget ui-corner-all" id="start-game-local" style="position: relative; left: 300px; bottom: 10px">Start Game</button>
+        <button class="ui-button ui-widget ui-corner-all" id="start-game-local" style="position: relative; left: 300px;">Start Game</button>
 
       </fieldset>';
       if(isset($user) && $user->isLoggedIn()) {
