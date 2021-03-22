@@ -29,6 +29,19 @@ table, td {
   transition: margin-left .5s;
   padding-left: 8px;
 }
+
+.button {
+    display: block;
+    width: 160px;
+    height: 45px;
+    background: #3B5998;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    line-height: 25px;
+}
 </style>
 
 <head>
@@ -98,6 +111,13 @@ table, td {
     <button class="ui-button ui-widget ui-corner-all" id="last-move">>></button>
     <br>
     <button class="ui-button ui-widget ui-corner-all" id="copy-to-local">Copy Game to Local</button>
+    <br><br>
+    <?php
+    echo '
+    <a class="button" href="https://www.facebook.com/sharer/sharer.php?u=crumble-online.com/online/view-game.php?game='.Input::get("game").'" target="_blank">
+      Share on Facebook
+    </a>';
+    ?>
   </div>
   <br><br>
   </div></td><td style="border:none;">
