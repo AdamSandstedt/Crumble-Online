@@ -1,3 +1,47 @@
+CREATE DATABASE IF NOT EXISTS `crumble`;
+
+CREATE USER IF NOT EXISTS 'username'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON `crumble`.* TO 'username'@'localhost';
+
+USE crumble;
+
+CREATE TABLE IF NOT EXISTS `games_completed` (
+  `id` int(11) NOT NULL PRIMARY KEY,
+  `user_id_black` int(11) NOT NULL,
+  `user_id_white` int(11) NOT NULL,
+  `width` int(11) NOT NULL,
+  `height` int(11) NOT NULL,
+  `moves` text NOT NULL,
+  `extra` char(1) NOT NULL DEFAULT 'n',
+  `winner` varchar(1) NOT NULL,
+  `end_time` int(10) UNSIGNED NOT NULL DEFAULT (NOW()+0),
+  `time_black` mediumint(9) DEFAULT NULL,
+  `time_white` mediumint(9) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `games_current` (
+  `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `user_id_black` int(11) NOT NULL,
+  `user_id_white` int(11) NOT NULL,
+  `width` int(11) NOT NULL,
+  `height` int(11) NOT NULL,
+  `moves` text NOT NULL,
+  `extra` char(1) NOT NULL DEFAULT 'n',
+  `time` int(10) UNSIGNED DEFAULT (NOW()+0),
+  `time_black` mediumint(9) DEFAULT NULL,
+  `time_white` mediumint(9) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `game_challenges` (
+  `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `width` int(11) NOT NULL,
+  `height` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `plays` varchar(1) NOT NULL,
+  `extra` char(1) NOT NULL DEFAULT 'n'
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
 -- phpMyAdmin SQL Dump
 -- version 5.0.2
 -- https://www.phpmyadmin.net/
@@ -27,8 +71,8 @@ SET time_zone = "+00:00";
 -- Table structure for table `audit`
 --
 
-CREATE TABLE `audit` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `audit` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `user` int(11) NOT NULL,
   `page` varchar(255) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -42,8 +86,8 @@ CREATE TABLE `audit` (
 -- Table structure for table `crons`
 --
 
-CREATE TABLE `crons` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `crons` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `active` int(1) NOT NULL DEFAULT 1,
   `sort` int(3) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -57,7 +101,7 @@ CREATE TABLE `crons` (
 -- Dumping data for table `crons`
 --
 
-INSERT INTO `crons` (`id`, `active`, `sort`, `name`, `file`, `createdby`, `created`, `modified`) VALUES
+INSERT IGNORE INTO `crons` (`id`, `active`, `sort`, `name`, `file`, `createdby`, `created`, `modified`) VALUES
 (1, 0, 100, 'Auto-Backup', 'backup.php', 1, '2017-09-16 07:49:22', '2017-11-11 20:15:36');
 
 -- --------------------------------------------------------
@@ -66,8 +110,8 @@ INSERT INTO `crons` (`id`, `active`, `sort`, `name`, `file`, `createdby`, `creat
 -- Table structure for table `crons_logs`
 --
 
-CREATE TABLE `crons_logs` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `crons_logs` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `cron_id` int(11) NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `user_id` int(11) NOT NULL
@@ -79,8 +123,8 @@ CREATE TABLE `crons_logs` (
 -- Table structure for table `email`
 --
 
-CREATE TABLE `email` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `email` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `website_name` varchar(100) NOT NULL,
   `smtp_server` varchar(100) NOT NULL,
   `smtp_port` int(10) NOT NULL,
@@ -101,7 +145,7 @@ CREATE TABLE `email` (
 -- Dumping data for table `email`
 --
 
-INSERT INTO `email` (`id`, `website_name`, `smtp_server`, `smtp_port`, `email_login`, `email_pass`, `from_name`, `from_email`, `transport`, `verify_url`, `email_act`, `debug_level`, `isSMTP`, `isHTML`, `useSMTPauth`) VALUES
+INSERT IGNORE INTO `email` (`id`, `website_name`, `smtp_server`, `smtp_port`, `email_login`, `email_pass`, `from_name`, `from_email`, `transport`, `verify_url`, `email_act`, `debug_level`, `isSMTP`, `isHTML`, `useSMTPauth`) VALUES
 (1, 'User Spice', 'smtp.gmail.com', 587, 'yourEmail@gmail.com', '1234', 'User Spice', 'yourEmail@gmail.com', 'tls', 'http://localhost/userspice', 0, 0, 0, 'true', 'true');
 
 -- --------------------------------------------------------
@@ -110,17 +154,19 @@ INSERT INTO `email` (`id`, `website_name`, `smtp_server`, `smtp_port`, `email_lo
 -- Table structure for table `groups_menus`
 --
 
-CREATE TABLE `groups_menus` (
-  `id` int(11) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `groups_menus` (
+  `id` int(11) UNSIGNED NOT NULL PRIMARY KEY,
   `group_id` int(11) UNSIGNED NOT NULL,
-  `menu_id` int(11) UNSIGNED NOT NULL
+  `menu_id` int(11) UNSIGNED NOT NULL,
+  KEY (group_id),
+  KEY (menu_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `groups_menus`
 --
 
-INSERT INTO `groups_menus` (`id`, `group_id`, `menu_id`) VALUES
+INSERT IGNORE INTO `groups_menus` (`id`, `group_id`, `menu_id`) VALUES
 (5, 0, 3),
 (6, 0, 1),
 (7, 0, 2),
@@ -159,8 +205,8 @@ INSERT INTO `groups_menus` (`id`, `group_id`, `menu_id`) VALUES
 -- Table structure for table `keys`
 --
 
-CREATE TABLE `keys` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `keys` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `stripe_ts` varchar(255) NOT NULL,
   `stripe_tp` varchar(255) NOT NULL,
   `stripe_ls` varchar(255) NOT NULL,
@@ -175,8 +221,8 @@ CREATE TABLE `keys` (
 -- Table structure for table `logs`
 --
 
-CREATE TABLE `logs` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `logs` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `user_id` int(11) DEFAULT NULL,
   `logdate` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `logtype` varchar(25) NOT NULL,
@@ -190,8 +236,8 @@ CREATE TABLE `logs` (
 -- Table structure for table `menus`
 --
 
-CREATE TABLE `menus` (
-  `id` int(10) NOT NULL,
+CREATE TABLE IF NOT EXISTS `menus` (
+  `id` int(10) NOT NULL PRIMARY KEY,
   `menu_title` varchar(255) NOT NULL,
   `parent` int(10) NOT NULL,
   `dropdown` int(1) NOT NULL,
@@ -206,7 +252,7 @@ CREATE TABLE `menus` (
 -- Dumping data for table `menus`
 --
 
-INSERT INTO `menus` (`id`, `menu_title`, `parent`, `dropdown`, `logged_in`, `display_order`, `label`, `link`, `icon_class`) VALUES
+INSERT IGNORE INTO `menus` (`id`, `menu_title`, `parent`, `dropdown`, `logged_in`, `display_order`, `label`, `link`, `icon_class`) VALUES
 (1, 'main', 2, 0, 1, 1, '{{home}}', '', 'fa fa-fw fa-home'),
 (2, 'main', -1, 1, 1, 14, '', '', 'fa fa-fw fa-cogs'),
 (3, 'main', -1, 0, 1, 11, '{{username}}', 'users/account.php', 'fa fa-fw fa-user'),
@@ -233,8 +279,8 @@ INSERT INTO `menus` (`id`, `menu_title`, `parent`, `dropdown`, `logged_in`, `dis
 -- Table structure for table `messages`
 --
 
-CREATE TABLE `messages` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `messages` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `msg_from` int(11) NOT NULL,
   `msg_to` int(11) NOT NULL,
   `msg_body` mediumtext NOT NULL,
@@ -250,8 +296,8 @@ CREATE TABLE `messages` (
 -- Table structure for table `message_threads`
 --
 
-CREATE TABLE `message_threads` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `message_threads` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `msg_to` int(11) NOT NULL,
   `msg_from` int(11) NOT NULL,
   `msg_subject` varchar(255) NOT NULL,
@@ -269,8 +315,8 @@ CREATE TABLE `message_threads` (
 -- Table structure for table `notifications`
 --
 
-CREATE TABLE `notifications` (
-  `id` int(11) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `notifications` (
+  `id` int(11) UNSIGNED NOT NULL PRIMARY KEY,
   `user_id` int(11) NOT NULL,
   `message` longtext NOT NULL,
   `is_read` tinyint(4) NOT NULL,
@@ -287,8 +333,8 @@ CREATE TABLE `notifications` (
 -- Table structure for table `pages`
 --
 
-CREATE TABLE `pages` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `pages` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `page` varchar(100) NOT NULL,
   `title` varchar(50) NOT NULL,
   `private` int(11) NOT NULL DEFAULT 0,
@@ -300,7 +346,7 @@ CREATE TABLE `pages` (
 -- Dumping data for table `pages`
 --
 
-INSERT INTO `pages` (`id`, `page`, `title`, `private`, `re_auth`, `core`) VALUES
+INSERT IGNORE INTO `pages` (`id`, `page`, `title`, `private`, `re_auth`, `core`) VALUES
 (1, 'index.php', 'Home', 0, 0, 1),
 (2, 'z_us_root.php', '', 0, 0, 1),
 (3, 'users/account.php', 'Account Dashboard', 1, 0, 1),
@@ -318,7 +364,31 @@ INSERT INTO `pages` (`id`, `page`, `title`, `private`, `re_auth`, `core`) VALUES
 (26, 'users/verify_resend.php', 'Account Verification', 0, 0, 1),
 (45, 'users/maintenance.php', 'Maintenance', 0, 0, 1),
 (68, 'users/update.php', 'Update Manager', 1, 0, 1),
-(81, 'users/admin_pin.php', 'Verification PIN Set', 1, 0, 1);
+(81, 'users/admin_pin.php', 'Verification PIN Set', 1, 0, 1),
+(90, 'new.php', '', 0, 0, 0),
+(92, 'users/user_agreement_acknowledge.php', '', 1, 0, 0),
+(93, 'users/views_admin_notifications.php', '', 1, 0, 0),
+(94, 'local/two-player.php', '', 0, 0, 0),
+(96, 'online/play.php', '', 1, 0, 0),
+(99, 'my-games.php', '', 0, 0, 0),
+(101, 'online/accept-challenge.php', '', 1, 0, 0),
+(102, 'online/create-challenge.php', '', 1, 0, 0),
+(109, 'contact.php', '', 0, 0, 0),
+(110, 'contact-success.php', '', 0, 0, 0),
+(111, 'previous-games.php', '', 0, 0, 0),
+(112, 'online/view-game.php', '', 0, 0, 0),
+(113, 'online/remove-challenge.php', '', 1, 0, 0),
+(114, 'users/message.php', '', 1, 0, 0),
+(115, 'users/messages.php', '', 1, 0, 0),
+(140, 'assets/php/get_games.php', '', 1, 0, 0),
+(141, 'assets/php/get_move.php', '', 1, 0, 0),
+(142, 'assets/php/get_turn.php', '', 1, 0, 0),
+(143, 'assets/php/headernav.php', '', 0, 0, 0),
+(144, 'assets/php/submit-move.php', '', 1, 0, 0),
+(145, 'source-code.php', '', 0, 0, 0),
+(146, 'assets/php/get_times.php', '', 1, 0, 0),
+(147, 'local/single-player.php', '', 0, 0, 0),
+(148, 'online/search-games.php', '', 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -326,8 +396,8 @@ INSERT INTO `pages` (`id`, `page`, `title`, `private`, `re_auth`, `core`) VALUES
 -- Table structure for table `permissions`
 --
 
-CREATE TABLE `permissions` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `permissions` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `name` varchar(150) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -335,7 +405,7 @@ CREATE TABLE `permissions` (
 -- Dumping data for table `permissions`
 --
 
-INSERT INTO `permissions` (`id`, `name`) VALUES
+INSERT IGNORE INTO `permissions` (`id`, `name`) VALUES
 (1, 'User'),
 (2, 'Administrator');
 
@@ -345,8 +415,8 @@ INSERT INTO `permissions` (`id`, `name`) VALUES
 -- Table structure for table `permission_page_matches`
 --
 
-CREATE TABLE `permission_page_matches` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `permission_page_matches` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `permission_id` int(11) DEFAULT NULL,
   `page_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -355,12 +425,49 @@ CREATE TABLE `permission_page_matches` (
 -- Dumping data for table `permission_page_matches`
 --
 
-INSERT INTO `permission_page_matches` (`id`, `permission_id`, `page_id`) VALUES
+INSERT IGNORE INTO `permission_page_matches` (`id`, `permission_id`, `page_id`) VALUES
 (3, 1, 24),
 (14, 2, 4),
 (15, 1, 3),
 (38, 2, 68),
-(54, 1, 81);
+(54, 1, 81),
+(58, 1, 90),
+(59, 2, 90),
+(60, 2, 95),
+(61, 2, 96),
+(62, 2, 98),
+(63, 2, 99),
+(64, 1, 99),
+(65, 1, 98),
+(66, 1, 96),
+(67, 2, 100),
+(68, 2, 101),
+(69, 2, 102),
+(70, 2, 103),
+(71, 1, 102),
+(72, 1, 101),
+(73, 2, 108),
+(74, 1, 112),
+(75, 2, 112),
+(76, 2, 113),
+(77, 1, 113),
+(78, 1, 116),
+(79, 2, 116),
+(82, 2, 133),
+(85, 2, 134),
+(86, 2, 135),
+(87, 2, 136),
+(88, 2, 138),
+(89, 1, 139),
+(90, 2, 139),
+(91, 1, 140),
+(92, 2, 140),
+(93, 1, 141),
+(94, 2, 141),
+(95, 1, 142),
+(96, 2, 142),
+(97, 1, 144),
+(98, 2, 144);
 
 -- --------------------------------------------------------
 
@@ -368,8 +475,8 @@ INSERT INTO `permission_page_matches` (`id`, `permission_id`, `page_id`) VALUES
 -- Table structure for table `profiles`
 --
 
-CREATE TABLE `profiles` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `profiles` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `user_id` int(11) NOT NULL,
   `bio` mediumtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -378,7 +485,7 @@ CREATE TABLE `profiles` (
 -- Dumping data for table `profiles`
 --
 
-INSERT INTO `profiles` (`id`, `user_id`, `bio`) VALUES
+INSERT IGNORE INTO `profiles` (`id`, `user_id`, `bio`) VALUES
 (1, 1, '&lt;h1&gt;This is the Admin&#039;s bio.&lt;/h1&gt;'),
 (2, 2, 'This is your bio');
 
@@ -388,8 +495,8 @@ INSERT INTO `profiles` (`id`, `user_id`, `bio`) VALUES
 -- Table structure for table `settings`
 --
 
-CREATE TABLE `settings` (
-  `id` int(50) NOT NULL,
+CREATE TABLE IF NOT EXISTS `settings` (
+  `id` int(50) NOT NULL PRIMARY KEY,
   `recaptcha` int(1) NOT NULL DEFAULT 0,
   `force_ssl` int(1) NOT NULL,
   `css_sample` int(1) NOT NULL,
@@ -466,7 +573,7 @@ CREATE TABLE `settings` (
 -- Dumping data for table `settings`
 --
 
-INSERT INTO `settings` (`id`, `recaptcha`, `force_ssl`, `css_sample`, `us_css1`, `us_css2`, `us_css3`, `site_name`, `language`, `track_guest`, `site_offline`, `force_pr`, `glogin`, `fblogin`, `gid`, `gsecret`, `gredirect`, `ghome`, `fbid`, `fbsecret`, `fbcallback`, `graph_ver`, `finalredir`, `req_cap`, `req_num`, `min_pw`, `max_pw`, `min_un`, `max_un`, `messaging`, `snooping`, `echouser`, `wys`, `change_un`, `backup_dest`, `backup_source`, `backup_table`, `msg_notification`, `permission_restriction`, `auto_assign_un`, `page_permission_restriction`, `msg_blocked_users`, `msg_default_to`, `notifications`, `notif_daylimit`, `recap_public`, `recap_private`, `page_default_private`, `navigation_type`, `copyright`, `custom_settings`, `system_announcement`, `twofa`, `force_notif`, `cron_ip`, `registration`, `join_vericode_expiry`, `reset_vericode_expiry`, `admin_verify`, `admin_verify_timeout`, `session_manager`, `template`, `saas`, `redirect_uri_after_login`, `show_tos`, `default_language`, `allow_language`, `spice_api`, `announce`, `bleeding_edge`, `err_time`) VALUES
+INSERT IGNORE INTO `settings` (`id`, `recaptcha`, `force_ssl`, `css_sample`, `us_css1`, `us_css2`, `us_css3`, `site_name`, `language`, `track_guest`, `site_offline`, `force_pr`, `glogin`, `fblogin`, `gid`, `gsecret`, `gredirect`, `ghome`, `fbid`, `fbsecret`, `fbcallback`, `graph_ver`, `finalredir`, `req_cap`, `req_num`, `min_pw`, `max_pw`, `min_un`, `max_un`, `messaging`, `snooping`, `echouser`, `wys`, `change_un`, `backup_dest`, `backup_source`, `backup_table`, `msg_notification`, `permission_restriction`, `auto_assign_un`, `page_permission_restriction`, `msg_blocked_users`, `msg_default_to`, `notifications`, `notif_daylimit`, `recap_public`, `recap_private`, `page_default_private`, `navigation_type`, `copyright`, `custom_settings`, `system_announcement`, `twofa`, `force_notif`, `cron_ip`, `registration`, `join_vericode_expiry`, `reset_vericode_expiry`, `admin_verify`, `admin_verify_timeout`, `session_manager`, `template`, `saas`, `redirect_uri_after_login`, `show_tos`, `default_language`, `allow_language`, `spice_api`, `announce`, `bleeding_edge`, `err_time`) VALUES
 (1, 0, 0, 0, '../users/css/color_schemes/bootstrap.min.css', '../users/css/sb-admin.css', '../users/css/custom.css', 'UserSpice', 'en', 1, 0, 0, 0, 0, '', '', '', '', '', '', '', '', '', 0, 0, 6, 30, 4, 30, 0, 1, 0, 1, 0, '/', 'everything', '', 0, 0, 0, 0, 0, 1, 0, 7, '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe', 1, 1, 'UserSpice', 1, '', 0, 0, 'off', 1, 24, 15, 1, 120, 0, 'standard', NULL, NULL, 1, 'en-US', 0, NULL, '2020-10-07 21:26:18', 0, 15);
 
 -- --------------------------------------------------------
@@ -475,8 +582,8 @@ INSERT INTO `settings` (`id`, `recaptcha`, `force_ssl`, `css_sample`, `us_css1`,
 -- Table structure for table `updates`
 --
 
-CREATE TABLE `updates` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `updates` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `migration` varchar(15) NOT NULL,
   `applied_on` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `update_skipped` tinyint(1) DEFAULT NULL
@@ -486,7 +593,7 @@ CREATE TABLE `updates` (
 -- Dumping data for table `updates`
 --
 
-INSERT INTO `updates` (`id`, `migration`, `applied_on`, `update_skipped`) VALUES
+INSERT IGNORE INTO `updates` (`id`, `migration`, `applied_on`, `update_skipped`) VALUES
 (15, '1XdrInkjV86F', '2018-02-18 22:33:24', NULL),
 (16, '3GJYaKcqUtw7', '2018-04-25 16:51:08', NULL),
 (17, '3GJYaKcqUtz8', '2018-04-25 16:51:08', NULL),
@@ -544,8 +651,8 @@ INSERT INTO `updates` (`id`, `migration`, `applied_on`, `update_skipped`) VALUES
 -- Table structure for table `users`
 --
 
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `permissions` tinyint(1) NOT NULL,
   `email` varchar(155) NOT NULL,
   `email_new` varchar(155) DEFAULT NULL,
@@ -580,14 +687,15 @@ CREATE TABLE `users` (
   `logins` int(11) UNSIGNED NOT NULL DEFAULT 0,
   `last_login` datetime DEFAULT NULL,
   `join_date` datetime,
-  `modified` datetime
+  `modified` datetime,
+  KEY (email) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `permissions`, `email`, `email_new`, `username`, `password`, `pin`, `fname`, `lname`, `language`, `email_verified`, `vericode`, `vericode_expiry`, `oauth_provider`, `oauth_uid`, `gpluslink`, `account_owner`, `account_id`, `account_mgr`, `fb_uid`, `picture`, `protected`, `msg_exempt`, `dev_user`, `msg_notification`, `cloak_allowed`, `oauth_tos_accepted`, `un_changed`, `force_pr`, `logins`, `last_login`, `join_date`, `modified`) VALUES
+INSERT IGNORE INTO `users` (`id`, `permissions`, `email`, `email_new`, `username`, `password`, `pin`, `fname`, `lname`, `language`, `email_verified`, `vericode`, `vericode_expiry`, `oauth_provider`, `oauth_uid`, `gpluslink`, `account_owner`, `account_id`, `account_mgr`, `fb_uid`, `picture`, `protected`, `msg_exempt`, `dev_user`, `msg_notification`, `cloak_allowed`, `oauth_tos_accepted`, `un_changed`, `force_pr`, `logins`, `last_login`, `join_date`, `modified`) VALUES
 (1, 1, 'userspicephp@userspice.com', NULL, 'admin', '$2y$12$1v06jm2KMOXuuo3qP7erTuTIJFOnzhpds1Moa8BadnUUeX0RV3ex.', NULL, 'The', 'Admin', 'en-US', 1, 'nlPsJDtyeqFWsS', NULL, '', '', '', 0, 0, 0, '', '', 1, 1, 0, 1, 0, NULL, 0, 0, 0, '2016-01-01 00:00:00', '2016-01-01 00:00:00', '2016-01-01 00:00:00');
 
 -- --------------------------------------------------------
@@ -596,8 +704,8 @@ INSERT INTO `users` (`id`, `permissions`, `email`, `email_new`, `username`, `pas
 -- Table structure for table `users_online`
 --
 
-CREATE TABLE `users_online` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `users_online` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `ip` varchar(15) NOT NULL,
   `timestamp` varchar(15) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
@@ -608,7 +716,7 @@ CREATE TABLE `users_online` (
 -- Dumping data for table `users_online`
 --
 
-INSERT INTO `users_online` (`id`, `ip`, `timestamp`, `user_id`, `session`) VALUES
+INSERT IGNORE INTO `users_online` (`id`, `ip`, `timestamp`, `user_id`, `session`) VALUES
 (1, '::1', '1544553219', 1, '');
 
 -- --------------------------------------------------------
@@ -617,8 +725,8 @@ INSERT INTO `users_online` (`id`, `ip`, `timestamp`, `user_id`, `session`) VALUE
 -- Table structure for table `users_session`
 --
 
-CREATE TABLE `users_session` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `users_session` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `user_id` int(11) NOT NULL,
   `hash` varchar(255) NOT NULL,
   `uagent` mediumtext DEFAULT NULL
@@ -630,8 +738,8 @@ CREATE TABLE `users_session` (
 -- Table structure for table `user_permission_matches`
 --
 
-CREATE TABLE `user_permission_matches` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `user_permission_matches` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `user_id` int(11) NOT NULL,
   `permission_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -640,7 +748,7 @@ CREATE TABLE `user_permission_matches` (
 -- Dumping data for table `user_permission_matches`
 --
 
-INSERT INTO `user_permission_matches` (`id`, `user_id`, `permission_id`) VALUES
+INSERT IGNORE INTO `user_permission_matches` (`id`, `user_id`, `permission_id`) VALUES
 (100, 1, 1),
 (101, 1, 2);
 
@@ -650,8 +758,8 @@ INSERT INTO `user_permission_matches` (`id`, `user_id`, `permission_id`) VALUES
 -- Table structure for table `us_announcements`
 --
 
-CREATE TABLE `us_announcements` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `us_announcements` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `dismissed` int(11) NOT NULL,
   `link` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
@@ -666,8 +774,8 @@ CREATE TABLE `us_announcements` (
 -- Table structure for table `us_fingerprints`
 --
 
-CREATE TABLE `us_fingerprints` (
-  `kFingerprintID` int(11) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `us_fingerprints` (
+  `kFingerprintID` int(11) UNSIGNED NOT NULL PRIMARY KEY,
   `fkUserID` int(11) NOT NULL,
   `Fingerprint` varchar(32) NOT NULL,
   `Fingerprint_Expiry` datetime NOT NULL,
@@ -680,8 +788,8 @@ CREATE TABLE `us_fingerprints` (
 -- Table structure for table `us_fingerprint_assets`
 --
 
-CREATE TABLE `us_fingerprint_assets` (
-  `kFingerprintAssetID` int(11) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `us_fingerprint_assets` (
+  `kFingerprintAssetID` int(11) UNSIGNED NOT NULL PRIMARY KEY,
   `fkFingerprintID` int(11) NOT NULL,
   `IP_Address` varchar(255) NOT NULL,
   `User_Browser` varchar(255) NOT NULL,
@@ -694,8 +802,8 @@ CREATE TABLE `us_fingerprint_assets` (
 -- Table structure for table `us_forms`
 --
 
-CREATE TABLE `us_forms` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `us_forms` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `form` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -705,8 +813,8 @@ CREATE TABLE `us_forms` (
 -- Table structure for table `us_form_validation`
 --
 
-CREATE TABLE `us_form_validation` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `us_form_validation` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `value` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL,
   `params` varchar(255) NOT NULL
@@ -716,7 +824,7 @@ CREATE TABLE `us_form_validation` (
 -- Dumping data for table `us_form_validation`
 --
 
-INSERT INTO `us_form_validation` (`id`, `value`, `description`, `params`) VALUES
+INSERT IGNORE INTO `us_form_validation` (`id`, `value`, `description`, `params`) VALUES
 (1, 'min', 'Minimum # of Characters', 'number'),
 (2, 'max', 'Maximum # of Characters', 'number'),
 (3, 'is_numeric', 'Must be a number', 'true'),
@@ -737,8 +845,8 @@ INSERT INTO `us_form_validation` (`id`, `value`, `description`, `params`) VALUES
 -- Table structure for table `us_form_views`
 --
 
-CREATE TABLE `us_form_views` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `us_form_views` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `form_name` varchar(255) NOT NULL,
   `view_name` varchar(255) NOT NULL,
   `fields` mediumtext NOT NULL
@@ -750,8 +858,8 @@ CREATE TABLE `us_form_views` (
 -- Table structure for table `us_ip_blacklist`
 --
 
-CREATE TABLE `us_ip_blacklist` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `us_ip_blacklist` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `ip` varchar(50) NOT NULL,
   `last_user` int(11) NOT NULL DEFAULT 0,
   `reason` int(11) NOT NULL DEFAULT 0
@@ -763,8 +871,8 @@ CREATE TABLE `us_ip_blacklist` (
 -- Table structure for table `us_ip_list`
 --
 
-CREATE TABLE `us_ip_list` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `us_ip_list` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `ip` varchar(50) NOT NULL,
   `user_id` int(11) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -774,7 +882,7 @@ CREATE TABLE `us_ip_list` (
 -- Dumping data for table `us_ip_list`
 --
 
-INSERT INTO `us_ip_list` (`id`, `ip`, `user_id`, `timestamp`) VALUES
+INSERT IGNORE INTO `us_ip_list` (`id`, `ip`, `user_id`, `timestamp`) VALUES
 (1, '::1', 1, '2017-10-09 15:20:03');
 
 -- --------------------------------------------------------
@@ -783,8 +891,8 @@ INSERT INTO `us_ip_list` (`id`, `ip`, `user_id`, `timestamp`) VALUES
 -- Table structure for table `us_ip_whitelist`
 --
 
-CREATE TABLE `us_ip_whitelist` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `us_ip_whitelist` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `ip` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -794,8 +902,8 @@ CREATE TABLE `us_ip_whitelist` (
 -- Table structure for table `us_management`
 --
 
-CREATE TABLE `us_management` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `us_management` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `page` varchar(255) NOT NULL,
   `view` varchar(255) NOT NULL,
   `feature` varchar(255) NOT NULL,
@@ -806,7 +914,7 @@ CREATE TABLE `us_management` (
 -- Dumping data for table `us_management`
 --
 
-INSERT INTO `us_management` (`id`, `page`, `view`, `feature`, `access`) VALUES
+INSERT IGNORE INTO `us_management` (`id`, `page`, `view`, `feature`, `access`) VALUES
 (1, '_admin_manage_ip.php', 'ip', 'IP Whitelist/Blacklist', ''),
 (2, '_admin_messages.php', 'messages', 'Messages', ''),
 (3, '_admin_nav.php', 'nav', 'Navigation', ''),
@@ -825,8 +933,8 @@ INSERT INTO `us_management` (`id`, `page`, `view`, `feature`, `access`) VALUES
 -- Table structure for table `us_plugins`
 --
 
-CREATE TABLE `us_plugins` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `us_plugins` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `plugin` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   `updates` mediumtext DEFAULT NULL,
@@ -839,8 +947,8 @@ CREATE TABLE `us_plugins` (
 -- Table structure for table `us_plugin_hooks`
 --
 
-CREATE TABLE `us_plugin_hooks` (
-  `id` int(11) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `us_plugin_hooks` (
+  `id` int(11) UNSIGNED NOT NULL PRIMARY KEY,
   `page` varchar(255) NOT NULL,
   `folder` varchar(255) NOT NULL,
   `position` varchar(255) NOT NULL,
@@ -854,8 +962,8 @@ CREATE TABLE `us_plugin_hooks` (
 -- Table structure for table `us_saas_levels`
 --
 
-CREATE TABLE `us_saas_levels` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `us_saas_levels` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `level` varchar(255) NOT NULL,
   `users` int(11) NOT NULL,
   `details` mediumtext NOT NULL
@@ -867,8 +975,8 @@ CREATE TABLE `us_saas_levels` (
 -- Table structure for table `us_saas_orgs`
 --
 
-CREATE TABLE `us_saas_orgs` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `us_saas_orgs` (
+  `id` int(11) NOT NULL PRIMARY KEY,
   `org` varchar(255) NOT NULL,
   `owner` int(11) NOT NULL,
   `level` int(11) NOT NULL,
@@ -881,8 +989,8 @@ CREATE TABLE `us_saas_orgs` (
 -- Table structure for table `us_user_sessions`
 --
 
-CREATE TABLE `us_user_sessions` (
-  `kUserSessionID` int(11) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `us_user_sessions` (
+  `kUserSessionID` int(11) UNSIGNED NOT NULL PRIMARY KEY,
   `fkUserID` int(11) UNSIGNED NOT NULL,
   `UserFingerprint` varchar(255) NOT NULL,
   `UserSessionIP` varchar(255) NOT NULL,
@@ -894,229 +1002,6 @@ CREATE TABLE `us_user_sessions` (
   `UserSessionEnded` tinyint(1) NOT NULL DEFAULT 0,
   `UserSessionEnded_Time` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `audit`
---
-ALTER TABLE `audit`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `crons`
---
-ALTER TABLE `crons`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `crons_logs`
---
-ALTER TABLE `crons_logs`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `email`
---
-ALTER TABLE `email`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `groups_menus`
---
-ALTER TABLE `groups_menus`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `group_id` (`group_id`),
-  ADD KEY `menu_id` (`menu_id`);
-
---
--- Indexes for table `keys`
---
-ALTER TABLE `keys`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `logs`
---
-ALTER TABLE `logs`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `menus`
---
-ALTER TABLE `menus`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `messages`
---
-ALTER TABLE `messages`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `message_threads`
---
-ALTER TABLE `message_threads`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `notifications`
---
-ALTER TABLE `notifications`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `pages`
---
-ALTER TABLE `pages`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `permissions`
---
-ALTER TABLE `permissions`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `permission_page_matches`
---
-ALTER TABLE `permission_page_matches`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `profiles`
---
-ALTER TABLE `profiles`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `settings`
---
-ALTER TABLE `settings`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `updates`
---
-ALTER TABLE `updates`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `EMAIL` (`email`) USING BTREE;
-
---
--- Indexes for table `users_online`
---
-ALTER TABLE `users_online`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `users_session`
---
-ALTER TABLE `users_session`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `user_permission_matches`
---
-ALTER TABLE `user_permission_matches`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `us_announcements`
---
-ALTER TABLE `us_announcements`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `us_fingerprints`
---
-ALTER TABLE `us_fingerprints`
-  ADD PRIMARY KEY (`kFingerprintID`);
-
---
--- Indexes for table `us_fingerprint_assets`
---
-ALTER TABLE `us_fingerprint_assets`
-  ADD PRIMARY KEY (`kFingerprintAssetID`);
-
---
--- Indexes for table `us_forms`
---
-ALTER TABLE `us_forms`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `us_form_validation`
---
-ALTER TABLE `us_form_validation`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `us_form_views`
---
-ALTER TABLE `us_form_views`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `us_ip_blacklist`
---
-ALTER TABLE `us_ip_blacklist`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `us_ip_list`
---
-ALTER TABLE `us_ip_list`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `us_ip_whitelist`
---
-ALTER TABLE `us_ip_whitelist`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `us_management`
---
-ALTER TABLE `us_management`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `us_plugins`
---
-ALTER TABLE `us_plugins`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `us_plugin_hooks`
---
-ALTER TABLE `us_plugin_hooks`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `us_saas_levels`
---
-ALTER TABLE `us_saas_levels`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `us_saas_orgs`
---
-ALTER TABLE `us_saas_orgs`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `us_user_sessions`
---
-ALTER TABLE `us_user_sessions`
-  ADD PRIMARY KEY (`kUserSessionID`);
 
 --
 -- AUTO_INCREMENT for dumped tables

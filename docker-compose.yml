@@ -1,0 +1,9 @@
+services:
+  crumble-online:
+    build: .
+    image: crumble-online
+    ports:
+      - "80:80"
+    volumes:
+      - ${PWD}:/opt/lampp/htdocs/
+    container_name: crumble-online
