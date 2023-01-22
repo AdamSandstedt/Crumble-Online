@@ -1,9 +1,13 @@
 services:
   crumble-online:
-    build: .
-    image: crumble-online
+    # Uncomment the next line if you want to build the image manually
+    # build: .
+    # This points to where I've uploaded the image, so docker compose will pull it from online automatically
+    image: adamsandstedt/crumble-online
     ports:
+      # The web server is on port 80 so we need to expose it
       - "80:80"
     volumes:
+      # This mounts the repo into the container where it's looking for the html files
       - ${PWD}:/opt/lampp/htdocs/
     container_name: crumble-online
